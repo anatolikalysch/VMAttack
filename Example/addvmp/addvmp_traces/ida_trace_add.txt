@@ -1,0 +1,587 @@
+Thread  	Address                 	Instruction                     	Result                                  	
+00000B94	.text:start             	Memory layout changed: 65 segments	Memory layout changed: 65 segments      	
+00000B94	                        	                                	ST0=FFFFFFFFFFFFFFFF ST1=FFFFFFFFFFFFFFFF ST2=FFFFFFFFFFFFFFFF ST3=FFFFFFFFFFFFFFFF ST4=FFFFFFFFFFFFFFFF ST5=FFFFFFFFFFFFFFFF ST6=FFFFFFFFFFFFFFFF ST7=FFFFFFFFFFFFFFFF CTRL=FFFF CS=0023 DS=002B ES=002B FS=0053 GS=002B SS=002B RAX=000000008C909730 RBX=00000000003D5000 RCX=000000000040100D RDX=000000000040100D RSI=000000000040100D RDI=000000000040100D RBP=000000000060FF94 RSP=000000000060FF84 R8=FFFFFFFFFFFFFFFF R9=FFFFFFFFFFFFFFFF R10=FFFFFFFFFFFFFFFF R11=FFFFFFFFFFFFFFFF R12=FFFFFFFFFFFFFFFF R13=FFFFFFFFFFFFFFFF R14=FFFFFFFFFFFFFFFF R15=FFFFFFFFFFFFFFFF EFL=00000246 XMM0= XMM1= XMM2= XMM3= XMM4= XMM5= XMM6= XMM7= XMM8= XMM9= XMM10= XMM11= XMM12= XMM13= XMM14= XMM15= MXCSR=FFFFFFFF MM0= MM1= MM2= MM3= MM4= MM5= MM6= MM7= 	
+00000B94	.text:start             	push    ebp                     	RSP=000000000060FF80                    	
+00000B94	.text:start+1           	mov     ebp, esp                	RBP=000000000060FF80                    	
+00000B94	.text:start+3           	sub     esp, 28h                	RSP=000000000060FF58 PF=0 AF=1 ZF=0     	
+00000B94	.text:start+6           	mov     [esp+28h+Str], offset Str; \"Hello Loop\"	                                        	
+00000B94	.text:start+D           	call    puts                    	RSP=000000000060FF54                    	
+00000B94	.text:puts              	jmp     ds:__imp_puts           	RAX=0000000000000000 RCX=00000000755C9AFF RDX=0000000000000000 RSP=000000000060FF58 PF=1 AF=0 ZF=1 	
+00000B94	.text:start+12          	mov     [esp+28h+var_24], 0BABE5h	                                        	
+00000B94	.text:start+1A          	mov     [esp+28h+Str], 0AFFE1h  	                                        	
+00000B94	.text:start+21          	call    sub_401000              	RSP=000000000060FF54                    	
+00000B94	.text:sub_401000        	jmp     loc_4048F7              	                                        	
+00000B94	.vmp0:loc_4048F7        	push    offset word_40489A      	RSP=000000000060FF50                    	
+00000B94	.vmp0:004048FC          	call    sub_404314              	RSP=000000000060FF4C                    	
+00000B94	.vmp0:sub_404314        	push    eax                     	RSP=000000000060FF48                    	
+00000B94	.vmp0:sub_404314+1      	push    ecx                     	RSP=000000000060FF44                    	
+00000B94	.vmp0:sub_404314+2      	push    edx                     	RSP=000000000060FF40                    	
+00000B94	.vmp0:sub_404314+3      	push    ebp                     	RSP=000000000060FF3C                    	
+00000B94	.vmp0:sub_404314+4      	push    esi                     	RSP=000000000060FF38                    	
+00000B94	.vmp0:sub_404314+5      	push    ebx                     	RSP=000000000060FF34                    	
+00000B94	.vmp0:sub_404314+6      	pushf                           	RSP=000000000060FF30                    	
+00000B94	.vmp0:sub_404314+7      	push    edi                     	RSP=000000000060FF2C                    	
+00000B94	.vmp0:sub_404314+8      	push    edi                     	RSP=000000000060FF28                    	
+00000B94	.vmp0:sub_404314+9      	push    dword_401005            	RSP=000000000060FF24                    	
+00000B94	.vmp0:sub_404314+F      	push    0                       	RSP=000000000060FF20                    	
+00000B94	.vmp0:sub_404314+14     	mov     esi, [esp+2Ch+arg_0]    	RSI=000000000040489A                    	
+00000B94	.vmp0:sub_404314+18     	mov     ebp, esp                	RBP=000000000060FF20                    	
+00000B94	.vmp0:sub_404314+1A     	sub     esp, 0C0h               	RSP=000000000060FE60 ZF=0               	
+00000B94	.vmp0:sub_404314+20     	mov     edi, esp                	RDI=000000000060FE60                    	
+00000B94	.vmp0:sub_404314:loc_404336	add     esi, [ebp+0]            	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000007                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=000000000040489B PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000004                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	                                        	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=000000000040489C PF=1               	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF24                    	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000000008C                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=000000000040489D PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40423B	mov     eax, [esi]              	RAX=0000000045053D64                    	
+00000B94	.vmp0:sub_404314-D7     	add     esi, 4                  	RSI=00000000004048A1 AF=1               	
+00000B94	.vmp0:sub_404314-D4     	sub     ebp, 4                  	RBP=000000000060FF20 AF=0               	
+00000B94	.vmp0:sub_404314-D1     	mov     [ebp+0], eax            	                                        	
+00000B94	.vmp0:sub_404314-CE     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	                                        	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE23                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000023                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048A2                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404285	mov     eax, [ebp+0]            	RAX=0000000045053D64                    	
+00000B94	.vmp0:sub_404314-8C     	add     [ebp+4], eax            	                                        	
+00000B94	.vmp0:sub_404314-89     	pushf                           	RSP=000000000060FE5C                    	
+00000B94	.vmp0:sub_404314-88     	pop     dword ptr [ebp+0]       	RSP=000000000060FE60                    	
+00000B94	.vmp0:sub_404314-85     	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000045053D37                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000037                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048A3 PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=000000000000000C                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=0000000000000202                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048A4 PF=0               	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF24 PF=1               	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000007                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048A5                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000014                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=0000000045053D64                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048A6                    	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF28                    	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000007                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048A7 PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000018                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=000000000040100D                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048A8                    	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF2C                    	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000007                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048A9 PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000010                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	                                        	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048AA                    	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF30 AF=1               	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000037                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048AB PF=0 AF=0          	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=000000000000000C                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=0000000000000246                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048AC PF=1               	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF34 PF=0               	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000037                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048AD                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000024                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=00000000003D5000                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048AE                    	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF38                    	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=00000000000000E6                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048AF PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000020                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=000000000040100D                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048B0 PF=0 AF=1          	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF3C PF=1 AF=0          	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000063                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048B1                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000028                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=000000000060FF80                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048B2                    	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF40 PF=0 AF=1          	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000007                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048B3 AF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000034                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=0000000000000000                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048B4 PF=1               	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF44                    	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000037                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048B5 PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000030                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=00000000755C9AFF                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048B6                    	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF48 PF=1               	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000007                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048B7                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=000000000000001C                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=0000000000000000                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048B8                    	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF4C PF=0               	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000007                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048B9                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=000000000000002C                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=0000000000404901                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048BA                    	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF50 PF=1 AF=1          	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000063                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048BB AF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000008                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=000000000040489A                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048BC PF=0               	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF54                    	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=00000000000000C6                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048BD PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000028                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=000000000060FF80                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF50                    	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048BE CF=1 AF=1          	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE08                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000008                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048BF PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404174	mov     eax, ebp                	RAX=000000000060FF50                    	
+00000B94	.vmp0:sub_404314-19E    	sub     ebp, 4                  	RBP=000000000060FF4C AF=1               	
+00000B94	.vmp0:sub_404314-19B    	mov     [ebp+0], eax            	                                        	
+00000B94	.vmp0:sub_404314-198    	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	PF=1 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE37                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000037                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048C0 AF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=000000000000002C                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=000000000060FF50                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048C1 PF=0 AF=0          	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF50 PF=1 AF=1          	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000004                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048C2 PF=0 AF=0          	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40480B	movzx   eax, byte ptr [esi]     	RAX=0000000000000008                    	
+00000B94	.vmp0:sub_404314+4FA    	cbw                             	                                        	
+00000B94	.vmp0:sub_404314+4FC    	cwde                            	                                        	
+00000B94	.vmp0:sub_404314+4FD    	sub     ebp, 4                  	RBP=000000000060FF4C AF=1               	
+00000B94	.vmp0:sub_404314+500    	sub     esi, 0FFFFFFFFh         	RSI=00000000004048C3 CF=1 PF=1          	
+00000B94	.vmp0:sub_404314+503    	mov     [ebp+0], eax            	                                        	
+00000B94	.vmp0:sub_404314+506    	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE41                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000041                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048C4 PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=000000000000002C                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	                                        	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF48 PF=1               	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048C5 CF=1 AF=1          	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 PF=0 AF=0                          	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FEBA                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=00000000000000BA                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048C6 PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404285	mov     eax, [ebp+0]            	RAX=000000000060FF50                    	
+00000B94	.vmp0:sub_404314-8C     	add     [ebp+4], eax            	PF=0                                    	
+00000B94	.vmp0:sub_404314-89     	pushf                           	RSP=000000000060FE5C                    	
+00000B94	.vmp0:sub_404314-88     	pop     dword ptr [ebp+0]       	RSP=000000000060FE60                    	
+00000B94	.vmp0:sub_404314-85     	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FF07                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000007                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048C7                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000028                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=0000000000000202                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048C8                    	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF4C                    	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000025                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048C9 PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40481F	mov     eax, [ebp+0]            	RAX=000000000060FF58                    	
+00000B94	.vmp0:sub_404314+50E    	mov     eax, ss:[eax]           	RAX=00000000000AFFE1                    	
+00000B94	.vmp0:sub_404314+511    	mov     [ebp+0], eax            	                                        	
+00000B94	.vmp0:sub_404314+514    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=00000000000AFF37                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000037                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048CA                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000038                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=00000000000AFFE1                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048CB PF=0               	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF50 PF=1 AF=1          	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000004                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048CC AF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40480B	movzx   eax, byte ptr [esi]     	RAX=000000000000000C                    	
+00000B94	.vmp0:sub_404314+4FA    	cbw                             	                                        	
+00000B94	.vmp0:sub_404314+4FC    	cwde                            	                                        	
+00000B94	.vmp0:sub_404314+4FD    	sub     ebp, 4                  	RBP=000000000060FF4C PF=0 AF=1          	
+00000B94	.vmp0:sub_404314+500    	sub     esi, 0FFFFFFFFh         	RSI=00000000004048CD CF=1               	
+00000B94	.vmp0:sub_404314+503    	mov     [ebp+0], eax            	                                        	
+00000B94	.vmp0:sub_404314+506    	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 PF=1 AF=0                          	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FEC6                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=00000000000000C6                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048CE PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=000000000000002C                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=000000000060FF50                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF48 PF=1               	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048CF CF=1 AF=1          	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 PF=0 AF=0                          	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE23                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000023                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048D0 AF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404285	mov     eax, [ebp+0]            	RAX=000000000060FF50                    	
+00000B94	.vmp0:sub_404314-8C     	add     [ebp+4], eax            	PF=1 AF=0                               	
+00000B94	.vmp0:sub_404314-89     	pushf                           	RSP=000000000060FE5C                    	
+00000B94	.vmp0:sub_404314-88     	pop     dword ptr [ebp+0]       	RSP=000000000060FE60                    	
+00000B94	.vmp0:sub_404314-85     	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FF07                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000007                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048D1                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000034                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=0000000000000206                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048D2                    	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF4C PF=0               	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000011                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048D3                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40481F	mov     eax, [ebp+0]            	RAX=000000000060FF5C                    	
+00000B94	.vmp0:sub_404314+50E    	mov     eax, ss:[eax]           	RAX=00000000000BABE5                    	
+00000B94	.vmp0:sub_404314+511    	mov     [ebp+0], eax            	                                        	
+00000B94	.vmp0:sub_404314+514    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=00000000000BAB37                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000037                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048D4 PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000000                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=00000000000BABE5                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048D5 PF=0               	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF50 PF=1 AF=1          	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000003                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048D6 PF=0 AF=0          	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000000                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	                                        	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF4C AF=1               	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048D7 CF=1 PF=1          	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE42                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000042                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048D8                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000038                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=00000000000AFFE1                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF48                    	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048D9 CF=1 PF=0 AF=1     	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE23                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000023                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048DA                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404285	mov     eax, [ebp+0]            	RAX=00000000000AFFE1                    	
+00000B94	.vmp0:sub_404314-8C     	add     [ebp+4], eax            	PF=1
+00000B94	.vmp0:sub_404314-89     	pushf                           	RSP=000000000060FE5C
+00000B94	.vmp0:sub_404314-88     	pop     dword ptr [ebp+0]       	RSP=000000000060FE60                    	
+00000B94	.vmp0:sub_404314-85     	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=00000000000AFF07                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000007                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048DB                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000034                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=0000000000000206                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048DC PF=0               	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF4C                    	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000007                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048DD PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=0000000000000008                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=000000000016ABC6                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048DE                    	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF50 AF=1               	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000063                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048DF PF=0 AF=0          	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_40482D	movzx   eax, byte ptr [esi]     	RAX=000000000000000C                    	
+00000B94	.vmp0:sub_404314+51C    	mov     edx, [ebp+0]            	RDX=000000000060FF80                    	
+00000B94	.vmp0:sub_404314+51F    	inc     esi                     	RSI=00000000004048E0 AF=1               	
+00000B94	.vmp0:sub_404314+520    	add     ebp, 4                  	RBP=000000000060FF54 AF=0               	
+00000B94	.vmp0:sub_404314+523    	mov     [eax+edi], edx          	                                        	
+00000B94	.vmp0:sub_404314+526    	jmp     loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=0000000000000003                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	                                        	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048E1 PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000008                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=000000000016ABC6                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF50                    	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048E2 CF=1 AF=1          	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE03                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000003                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048E3 PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000030                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=00000000755C9AFF                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF4C AF=1               	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048E4 CF=1 PF=1          	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE41                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000041                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048E5 PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000038                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=00000000000AFFE1                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF48 PF=1               	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048E6 CF=1 PF=0 AF=1     	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE03                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000003                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048E7 PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=000000000000000C                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=000000000060FF80                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF44                    	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048E8 CF=1 AF=1          	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 PF=0 AF=0                          	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE41                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000041                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048E9                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000020                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=000000000040100D                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF40                    	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048EA CF=1 AF=1          	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 PF=1 AF=0                          	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE95                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000095                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048EB                    	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000024                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=00000000003D5000                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF3C AF=1               	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048EC CF=1 PF=0          	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE42                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000042                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048ED PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000034                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=0000000000000206                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF38 PF=0               	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048EE CF=1 PF=1 AF=1     	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FEC6                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=00000000000000C6                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048EF PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000010                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=000000000040100D                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF34                    	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048F0 CF=1 PF=1          	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0                                    	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE03                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000003                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048F1 PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000018                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	                                        	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF30 PF=1               	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048F2 CF=1 PF=0 AF=1     	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE95                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000095                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048F3 PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=0000000000000030                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=00000000755C9AFF                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF2C PF=0 AF=1          	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048F4 CF=1               	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE03                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=0000000000000003                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048F5 PF=1               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_404218	movzx   eax, byte ptr [esi]     	RAX=000000000000000C                    	
+00000B94	.vmp0:sub_404314-F9     	mov     edx, [eax+edi]          	RDX=000000000060FF80                    	
+00000B94	.vmp0:sub_404314-F6     	sub     ebp, 4                  	RBP=000000000060FF28                    	
+00000B94	.vmp0:sub_404314-F3     	sub     esi, 0FFFFFFFFh         	RSI=00000000004048F6 CF=1 AF=1          	
+00000B94	.vmp0:sub_404314-F0     	mov     [ebp+0], edx            	                                        	
+00000B94	.vmp0:sub_404314-ED     	jmp     loc_404131              	                                        	
+00000B94	.vmp0:sub_404314:loc_404131	lea     eax, [edi+50h]          	RAX=000000000060FEB0                    	
+00000B94	.vmp0:sub_404314-1E0    	cmp     ebp, eax                	CF=0 AF=0                               	
+00000B94	.vmp0:sub_404314-1DE    	ja      loc_404339              	                                        	
+00000B94	.vmp0:sub_404314:loc_404339	mov     al, [esi]               	RAX=000000000060FE0A                    	
+00000B94	.vmp0:sub_404314+27     	movzx   eax, al                 	RAX=000000000000000A                    	
+00000B94	.vmp0:sub_404314+2A     	add     esi, 1                  	RSI=00000000004048F7 PF=0               	
+00000B94	.vmp0:sub_404314+2D     	jmp     ds:off_40439C[eax*4]    	                                        	
+00000B94	.vmp0:sub_404314:loc_4047FD	mov     esp, ebp                	RSP=000000000060FF28                    	
+00000B94	.vmp0:sub_404314+4EB    	pop     ebx                     	RBX=000000000060FF80 RSP=000000000060FF2C 	
+00000B94	.vmp0:sub_404314+4EC    	pop     ecx                     	RSP=000000000060FF30                    	
+00000B94	.vmp0:sub_404314+4ED    	pop     ecx                     	RCX=000000000040100D RSP=000000000060FF34 	
+00000B94	.vmp0:sub_404314+4EE    	pop     edi                     	RDI=000000000040100D RSP=000000000060FF38 	
+00000B94	.vmp0:sub_404314+4EF    	popf                            	RSP=000000000060FF3C PF=1               	
+00000B94	.vmp0:sub_404314+4F0    	pop     ebx                     	RBX=00000000003D5000 RSP=000000000060FF40 	
+00000B94	.vmp0:sub_404314+4F1    	pop     esi                     	RSI=000000000040100D RSP=000000000060FF44 	
+00000B94	.vmp0:sub_404314+4F2    	pop     ebp                     	RBP=000000000060FF80 RSP=000000000060FF48 	
+00000B94	.vmp0:sub_404314+4F3    	pop     edx                     	RDX=00000000000AFFE1 RSP=000000000060FF4C 	
+00000B94	.vmp0:sub_404314+4F4    	pop     ecx                     	RCX=00000000755C9AFF RSP=000000000060FF50 	
+00000B94	.vmp0:sub_404314+4F5    	pop     eax                     	RAX=000000000016ABC6 RSP=000000000060FF54 	
+00000B94	.vmp0:sub_404314+4F6    	retn                            	RSP=000000000060FF58                    	
+00000B94	.text:start+26          	Memory layout changed: 63 segments	Memory layout changed: 63 segments      	
+00000B94	.text:start+26          	mov     [ebp+var_C], eax        	                                        	
+00000B94	.text:start+29          	mov     eax, [ebp+var_C]        	                                        	
+00000B94	.text:start+2C          	mov     [esp+28h+var_24], eax   	                                        	
+00000B94	.text:start+30          	mov     [esp+28h+Str], offset Format; \"erg = %i\\n\"	                                        	
+00000B94	.text:start+37          	call    printf                  	RAX=000000000000000E RCX=00000000755C49B3 RDX=0000000000000000 EFL=00000244 ZF=1 	
+00000B94	.text:start+3C          	mov     [esp+28h+Str], 0; Code  	EFL=00000246                            	
+00000B94	.text:start+43          	call    exit                    	RSP=000000000060FF54

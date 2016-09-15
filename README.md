@@ -4,17 +4,19 @@
 
 ##Introduction
 
-VMAttack is an **IDA PRO** Plugin which enables the reverse engineer to use additional analysis features designed to counter _virtualization-based obfuscation_. 
-The plugin supports static and dynamic analysis capabilities which use **IDA API** features in conjuncture with the plugins analysis capabilities to provide automatic, semi-automatic and manual analysis functionality.
+VMAttack is an **IDA PRO** Plugin which enables the reverse engineer to use additional analysis features designed to counter _virtualization-based obfuscation_. For now the focus is on **stack based virtual machines**, but will be broadened to support more architectures in the future. The plugin supports static and dynamic analysis capabilities which use **IDA API** features in conjunction with the plugins own analysis capabilities to provide automatic, semi-automatic and manual analysis functionality. 
+The main goal of this plugin is to assist the reverse engineer in undoing the _virtualization-based obfuscation_ and to automate the reversing process where possible.
 
 ##Installation
 ###Prerequisites
 
-- **IDA PRO** >= 6.6
+- IDA PRO >= 6.6
 
-- Python 2.7.10 or Python 2.7.11
+- Python 2.7.10/.11 
 
 - Tested with Windows 7 and Windows 10.
+
+
 
 ###Guided Install
 
@@ -29,10 +31,10 @@ You will be prompted for the full path to your **IDA PRO** installation, aside f
 ###Alternative manual Install:
 Should the guided install fail for any reason a manual installation is also possible.
 
-The only required python dependency is `distorm3` which can be installed via pip:
+The only required python dependencies are `distorm3` and `idacute` which can be installed via pip:
 
 ```python
-python pip install distorm3
+pip install distorm3 idacute
 ```
 
 Next the Windows environment variable should be set:
@@ -41,13 +43,63 @@ Next the Windows environment variable should be set:
 setx VMAttack X:full\path\to\plugin
 ```
 
-Last you should copy the `VMAttack_plugin_stub.py` into your **IDA PRO** Plugins directory. That's it now you're good to go!
+Last you should copy the `VMAttack_plugin_stub.py` into your **IDA PRO** Plugins directory. That's it, now you're good to go!
+
+##Quick start guide
+
+The Example folder contains the obfuscated binary and source binary of an add function. The obfuscated **addvmp** contains the VM function which we will analyze now.
+
+![alt text](screenshots/overview.png "Problem Statement")
+
+After a quick glance over the binary we see the simple structure: two arguments, `0AFFE1` and `0BABE5` are deployed on the stack and then a stub is called.
+ 
+![alt text](screenshots/stub.png "Problem Statement")
+ 
+The stub starts the virtual machine function with a reference to the start of the VM byte code pushed onto the stack.
+
+![alt text](screenshots/stub2.png "Problem Statement")
+
+Following the address we see the virtual machine function which is basically an interpreter for the received byte code.
+
+![alt text](screenshots/switch.png "Interpreter")
+
+A solution to this obfuscation would be the reversal of the interpreter and the interpretation of the byte code by the reverse engineer. Due to the time consuming nature of this task we will try to reverse the binary with our VMAttack plugin.
+
+VMAttacks static analysis functionality is enabled by default. The dynamic analysis capabilities however require an extra step. Since we want to use the static and dynamic capabilities for this demo, first we need to enable the dynamic functionality of VMAttack. This is done by either generating an instruction trace dynamically or loading an instruction trace from file. Trace generation is automatic and upon completion it will produce a success notification in **IDA**s _output window_. Traversed paths will be colored in a shade of blue, where a darker shade represents a higher number of traversals. Alternatively the loaded trace will only produce the success notification in **IDA**s _output window_.
+With the newly generated/loaded trace we now have dynamic an static capabilities enabled and can start the _grading system analysis_. Starting with the _grading analysis_ is usually a good fit, since it is automated and takes several analysis capabilities into account. This enables a **cumulative** result which can even tolerate analysis errors to some extent and still produce good results. At the end of the grading analysis the now graded trace will be presented in the **grading viewer**. The trace can now be filtered either by double clicking a grade or via context menu where the user will be prompted to input the grade threshold to display.
+In the case of addvmp it will be enough to select the highest grade to be presented with the deobfuscated function (since the original function is quite simple in this case). In becomes obvious, that the two values passed over the stack are added together. Additionally, should the result be not satisfiable, the user can change the importance of an analysis function (**see settings**) or even disable them (by setting the importance to 0), to produce better results. Simply change the importance and re-run the grading analysis.
+
+![alt text](screenshots/grading4.png "Grading Success")
+
+Lets assume we have a more complicated function and the _grading analysis_ did not lead us to the relevant instructions.
+One of the _semi-automated analysis_ capabilities could present a viable alternative or even show us which analysis function failed the grading system.
+The _input/output analysis_ could provide leads as to how the input arguments of the VM function are used and whether there is a connection between function input and function output. By checking the two input values `AFFE1` and `BABE5` and additionally the output value `16ABC6` it becomes evident which register contains the important instructions for out obfuscated function and how the `eax` return value came to be `16ABC6`.
+
+![alt text](screenshots/InputOutput3.png "Input/Output Success")
+
+Another powerful functionality is the _clustering analysis_. It enables the reverse engineer to quickly discern between repeating instructions and unique ones. The _clustering analysis view_ additionally enables quick removal of unnecessary clusters (or instructions) in a way speeding up the work of the reverse engineer. Should a mistake be made it can be undone or alternatively the original trace can be restored. To make sense of the clustering analysis usually requires an extensive analysis of the trace and can require repeating the clustering analysis with a different cluster heuristic value set via **settings**.
+
+![alt text](screenshots/clustering1.png "Input/Output Viewer")
+
+Out of the semi-automatic analysis the _optimization analysis_ requires the most user interaction. In turn it enables:
+
+- Optimizations which make the trace easier to read or even filter as unnecessary recognized instructions. 
+- Filtering capabilities to remove as unnecessary recognized instructions or even whole registers from the trace.
+- Undoing actions if you made a mistake.
+- Restoring the initial trace if you hit a wall.
+
+![alt text](screenshots/optimizations_success.png "Input/Output Viewer")
+
+The _static analysis_ in this case would enable us to analyze the byte code and optionally view the analysis as an _abstract VM graph_ of the byte code. The static deobfuscation of the byte code will produce comments behind relevant bytes to describe the operation this byte produces. The commented instructions are quite intuitive and should be easy to read.
+The abstract VM graph in turn will produce a control flow graph (in the case of addvmp just one basic block) filled with those abstract instructions from the byte code. This is also a good example of the accuracy of the static analysis, which without execution delivered an accurate representation of the initial deobfuscated function. After the static analysis we can clearly see that two arguments were passed to the function _(AOS = acces out of known space; indicates for example arguments passed via stack)_ and that they were eventually added together and then returned.
+
+![alt text](screenshots/ab_vm_graph.png "Abstract VM Graph")
 
 ##Analysis Capabilities
 
 The following subsection describes the analysis functions and offers additional information about the plugins inner workings. A quick start guide can be found in the next subsection.
 
-The analysis features are subdivided into automatic, semi-automatic and manual, depending on user interaction necessary for the completion of the analysis. While the automatic analysis require nearly none, manual analysis capabilities require interaction and will query the user if needed.
+The analysis features are subdivided into automatic, semi-automatic and manual, depending on user interaction necessary for the completion of the analysis. While the automatic analysis requires nearly none, manual analysis capabilities require interaction and will query the user if needed.
 
 ###Instruction Trace
 
@@ -58,7 +110,7 @@ But how can you actually get one? The two currently supported possibilities are 
 
 - Trace generation requires a working **IDA** debugger(e.g. Win32 DBG or Bochs DBG) and uses the **IDA** debugger API to generate an instruction trace. Visited basic blocks and instructions are colored in a shade of blue (color can be removed afterwards via **Remove Colors from Graph**). During the execution function arguments are extracted, if not deactivated via **settings**.
 
-- Alternatively an instruction trace can be loaded from file. Currently supported file types are .txt files exported from **IDA**s _Trace Window_ and .json files saved via **VMAttack**. OllyDbg and ImmunityDbg generated .txt trace files are supported but are currently more limited in the available analysis capabilities. 
+- Alternatively an instruction trace can be loaded from file. Currently supported file types are .txt files exported from **IDA**s _trace window_ and .json files saved via **VMAttack**. OllyDbg and ImmunityDbg generated .txt trace files are supported but are currently more limited in the available analysis capabilities. 
 
 ![alt text](screenshots/load_trace.png "Load trace file")
 
@@ -66,7 +118,7 @@ A reverse engineer can decide to save an analyzed trace as a .json file which ca
 
 ###What is a trace?
 
-In the plugin context a trace is a list object of trace lines. Each trace line consists of four basic values:
+In the plugin context a trace is a list object consisting of trace lines. Each trace line consists of four basic values:
 
 - The thread id
 - The address of the instruction
@@ -121,7 +173,7 @@ The abstract VM graph is an abstraction of how the control flow graph for the ob
 
 ![alt text](screenshots/static1.png "Static Deobfuscate")
 
-The static deobfuscate function tries to statically determine the instructions that will be executed by the byte code in the provided virtual machine function. The semi-automatic version of this analysis tries to determine all necessary values automatically. In the event of a mismatch the reverse engineer will be prompted for a decision. For example in this case the plugin determined the start of the bytecode to be at `0x40489c`, while the parameter for the function was `0x40489a`. This triggered a mismatch and the user is prompted with a decision which value should be used. In this case the function parameter `0x40489a` was indeed the start and should have been used as byte code start value.
+The static deobfuscate function tries to statically determine the instructions that will be executed by the byte code in the provided virtual machine function. The semi-automatic version of this analysis tries to determine all necessary values(byte code start, byte code end, jmp table base address, vm function start) automatically. In the event of a mismatch the reverse engineer will be prompted for a decision. For example in this case the plugin determined the start of the bytecode to be at `0x40489c`, while the parameter for the function was `0x40489a`. This triggered a mismatch and the user is prompted with a decision which value should be used. In this case the function parameter `0x40489a` was indeed the start and should have been used as byte code start value.
 
 
 ![alt text](screenshots/static2.png "Static Deobfuscate")
@@ -144,7 +196,7 @@ The trace optimizations viewer provides a way to dynamically interact with the t
 
 **Stack Address Propagation**: Every time a stack address is read the value on the stack address will be available as Stack comment.
 
-**Operation Standardisation (folding)**: A weaker version of the peephole optimization which standardizes certain operations.
+**Operation Standardization (folding)**: A weaker version of the peephole optimization which standardizes certain operations.
 
 **Unused Operand Folding (folding)**: Operands that are not used in later execution steps are purged from the trace.
 
@@ -176,16 +228,29 @@ By checking the check boxes of the values the viewer adds colorization to them:
 - Red: output values
 - Green: both
 
+![alt text](screenshots/InputOutput3.png "Input/Output Success")
+
 If a register turns green it is an indication, that its trace lines contain both a input and an output parameter. This means the register handles both the selected input and output values and either computations take place or the values are part of the trace lines CPU context.
 
 ![alt text](screenshots/InputOutput2.png "Input/Output Viewer")
 
 **Clustering Analysis**
 
-The main goal of the clustering analysis is to divide the instruction trace into clusters(=repeating instructions) and singles(=non-repeating instructions). The default declares a cluster if an address is encountered more than two times however this can be changed via **settings** by changing the value for `cluster heuristic`. After successful analysis the reverse engineer is presented with an instruction trace with single instructions and clusters. If basic block detection was not deactivated, the clusters themselves are additionally subdivided into basic blocks. Each basic block is shown as a one line summary. The basic block description consists of the basic block position inside the cluster, the start and end addresses and an instruction and stack change summary. While the stack change summary will contain all stack changes which took place during this basic block, instructions are only shown, if their value is used later or it is unclear whether their value is used. Instructions whose computations are simply overridden are not displayed in the basic block summary. 
+The main goal of the clustering analysis is to divide the instruction trace into clusters(=repeating instructions) and singles(=non-repeating instructions). The default declares a cluster if an address is encountered more than two times however this can be changed via **settings** by changing the value for `cluster heuristic`. After successful analysis the reverse engineer is presented with an instruction trace with single instructions and clusters. If basic block detection was not deactivated in the **settings**, the clusters themselves are additionally subdivided into basic blocks. Each basic block is shown as a one line summary. The basic block description consists of the basic block position inside the cluster, the start and end addresses and an instruction and stack change summary. While the stack change summary will contain all stack changes which took place during this basic block, instructions are only shown, if their value is used later or it is unclear whether their value is used. Instructions whose computations are simply overridden are not displayed in the basic block summary.
+Alternatively the basic block subdivision can be deactivated in the **settings** menu. After reloading the trace (or any removal action in the cluster viewer) the basic blocks will be gone and a cluster will only consist of its trace lines.
 
 ![alt text](screenshots/clustering1.png "Clustering Viewer")
 
+To increase interactivity the clustering viewer provides trace line and cluster removal by double click and a custom context menu(**CCM**):
+
+- **CCM** Remove X: Remove a line / cluster / basic block.
+- **CCM** Remove several clusters...: remove the X clusters with most occurrence. For example a threshold of 3 removes the 3 most common clusters.
+- **CCM** Undo: Undo change
+- **CCM** Restore original trace: restore the original trace
+- **CCM** Export this trace: save analysis result as .json file
+
+
+Aside from the clustering viewer the clustering analysis also opens a second viewer. 
 The stack changes viewer presents the stack and shows the changes which took place during the execution. It will be opened as part of the clustering analysis along with the clustering viewer. Aside from the stack address view, the user can also see which stack addresses are mapped onto which cpu registers. Basically this provides a stack centered point of view on the execution which is especially useful for stack machine based virtual machines, which operate mainly over the stack. 
 
 ![alt text](screenshots/StackChanges.png "Stack Changes Viewer")
@@ -226,17 +291,17 @@ Upon selection the user will be prompted for all the values:
     
 **Find Virtual Reg to Reg mapping:** This function helps to map the stack addresses of the output from the virtual machine function to the registers in which those values are returned.
     
-**Find VM Function Output Parameter** Finds function output parameter.
+**Find VM Function Output Parameter:** Finds function output parameter.
     
-**Find VM Function Input Parameter** Finds function input parameter.
+**Find VM Function Input Parameter:** Finds function input parameter.
 
-**Address Count:** The address count reads in a trace and returns in **IDA**s output window the ratio: (Address : frequency of occurrence). The Disasm is also displayed.
+**Address Count:** The address count reads in a trace and returns in **IDA**s output window the ratio: (Address (disasm): frequency of occurrence).
 
 ###Settings
 
 ![alt text](screenshots/settings.png "Settings")
 
-The Settings provide the necessary interface to enable the user to change values on the fly or even input own values if the ones determined by the plugin are wrong. Further changes in the default behaviour of the program can also be selected or deselected.  
+The Settings provide the necessary interface to enable the user to change values on the fly or even input own values if the ones determined by the plugin are wrong. Further changes in the default behaviour of the program can also be selected or removed.  
 
 **Code Start**: the byte code start
 
@@ -250,7 +315,7 @@ The Settings provide the necessary interface to enable the user to change values
 
 **Greedy Clustering**: cluster until no more clusters are found
 
-**Cluster Heuristic**: after how many repetitions an address becomes a cluster
+**Cluster Heuristic**: threshold after how many repetitions an address is considered a cluster
 
 **Input/Output Importance**: Importance of input/output analysis for the grading system (set to 0 to disable)
 
@@ -264,32 +329,3 @@ The Settings provide the necessary interface to enable the user to change values
 
 **Extract function parameters**: Should function parameters be extracted during trace generation
 
-##Quick start guide
-
-The Example folder contains the obfuscated and source files for an add function. The **addvmp** contains the vmfunction which we will analyze now.
-
-First thing after loading the example file **addvmp** into **IDA** should be the acquisition of an instruction trace. You can either load a trace from file or generate one. Trace generation is automatic and upon completion it will produce a success notification in **IDA**s _Output window_. Traversed paths will be colored in a shade of blue, where a darker shade represents a higher number of traversals. Alternatively the loaded trace will only produce the success notification.
-With the newly generated/loaded trace we now have dynamic an static capabilities enabled and can start the _grading system analysis_. Starting with the _grading analysis_ is usually a good fit, since it is automated and takes several analysis capabilities into account. This enables a **cumulative** result which can even tolerate analysis errors to some extent and still produce good results. At the end of the grading analysis the now graded trace will be presented in the **grading viewer**. The trace can now be filtered either by double clicking a grade or via context menu where the user will be prompted to input the grade threshold to display.
-In the case of addvmp it will be enough to select the highest grade to be presented with obfuscated function (since the obfuscated function is quite simple in this case). Additionally, should the result be not satisfiable, the user can change the importance of an analysis function (**see settings**) or even disable them (by setting the importance to 0), to produce better results. 
-
-![alt text](screenshots/grading4.png "Grading Success")
-
-Lets assume we have a more complicated function and the _grading analysis_ did not lead us to the relevant instructions.
-One of the _semi-automated analysis_ capabilities could present a viable alternative or even show us which analysis function failed the grading system.
-The _input/output analysis_ could provide leads as to how the input arguments of the VM function are used and whether there is a connection between function input and function output. By checking the two input values `AFFE1` and `BABE5` and additionally the output value `16ABC6` it becomes evident which register contains the important instructions for out obfuscated function and how the `eax` return value came to be `16ABC6`.
-
-![alt text](screenshots/InputOutput3.png "Input/Output Success")
-
-Another powerful functionality is the _clustering analysis_. It enables the reverse engineer to quickly discern between repeating instructions and unique ones. The _clustering analysis view_ additionally enables quick removal of unnecessary clusters (or instructions) in a way speeding up the work of the reverse engineer. Should a mistake be made it can be undone or alternatively the original trace can be restored. To make sense of the clustering analysis usually requires an extensive analysis of the trace and can require repeating the clustering analysis with a different cluster heuristic value set via **settings**.
-
-Out of the semi-automatic analysis the _optimization analysis_ requires the most user interaction. In turn it enables:
-
-- Optimizations which make the trace easier to read or even filter as unnecessary recognized instructions. 
-- Filtering capabilities to remove as unnecessary recognized instructions or even whole registers from the trace.
-- Undoing actions if you made a mistake.
-- Restoring the initial trace if you hit a wall.
-
-The _static analysis_ in this case would enable us to analyze the byte code and optionally view the analysis as an _abstract VM graph_ of the byte code. The static deobfuscation of the byte code will produce comments behind relevant bytes to describe the operation this byte produces. The commented instructions are quite intuitive and should be easy to read.
-The abstract VM graph in turn will produce a control flow graph (in the case of addvmp just one basic block) filled with those abstract instructions from the byte code. This is also a good example of the accuracy of the static analysis, which without execution delivered an accurate representation of the initial deobfuscated function. After the static analysis we can clearly see that two arguments were passed to the function _(AOS = acces out of known space; indicates for example arguments passed via stack)_ and that they were eventually added together and then returned.
-
-![alt text](screenshots/ab_vm_graph.png "Abstract VM Graph")
