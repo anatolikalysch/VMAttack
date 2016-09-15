@@ -53,15 +53,16 @@ The analysis features are subdivided into automatic, semi-automatic and manual, 
 
 ![alt text](screenshots/generate_trace.png "Instruction trace overview")
 
-For the dynamic analysis capabilities of the plugin the use of an instruction trace is necessary. The two possibilities are to either generate an instruction trace or to load one from file. 
+For the dynamic analysis capabilities of the plugin the use of an instruction trace is necessary. If you want to quickly check whether you already have a trace you can use the **Show Trace** feature. It will print your current trace in **IDA**s _output window_ or nothing if you don't have a trace.
+But how can you actually get one? The two currently supported possibilities are to either generate an instruction trace or to load one from file:
 
 - Trace generation requires a working **IDA** debugger(e.g. Win32 DBG or Bochs DBG) and uses the **IDA** debugger API to generate an instruction trace. Visited basic blocks and instructions are colored in a shade of blue (color can be removed afterwards via **Remove Colors from Graph**). During the execution function arguments are extracted, if not deactivated via **settings**.
 
-- Alternatively an instruction trace can be loaded from file. Currently supported file types are *.txt files exported from **IDA**s _Trace Window_ and *.json files saved via **VMAttack**. OllyDbg and ImmunityDbg generated *.txt trace files are supported but are currently more limited in the available analysis capabilities. 
+- Alternatively an instruction trace can be loaded from file. Currently supported file types are .txt files exported from **IDA**s _Trace Window_ and .json files saved via **VMAttack**. OllyDbg and ImmunityDbg generated .txt trace files are supported but are currently more limited in the available analysis capabilities. 
 
 ![alt text](screenshots/load_trace.png "Load trace file")
 
-A reverse engineer can decide to save an analyzed trace as a *.json file which can be loaded later on to continue analysis. This provides a convenient way to experiment on traces and combine different analysis together for improved results.
+A reverse engineer can decide to save an analyzed trace as a .json file which can be loaded later on to continue analysis. This provides a convenient way to experiment on traces and combine different analysis together for improved results.
 
 ###What is actually a trace?
 
@@ -120,7 +121,7 @@ The abstract VM graph is an abstraction of how the control flow graph for the ob
 
 ![alt text](screenshots/static1.png "Static Deobfuscate")
 
-The static deobfuscate function tries to statically determine the instructions that will be executed by the byte code in the provided virtual machine function. The semi-automatic version of this analysis tries to determine all necessary values automatically. In the event of a mismatch the reverse engineer will be prompted for a decision. For example in this case the plugin determined the the start of the bytecode to be at `0x40489c`, while the parameter for the function was `0x40489a`. This triggered a mismatch and the user is prompted with a decision which value should be used. In this case the function parameter `0x40489a` was indeed the start and should have been used as byte code start value.
+The static deobfuscate function tries to statically determine the instructions that will be executed by the byte code in the provided virtual machine function. The semi-automatic version of this analysis tries to determine all necessary values automatically. In the event of a mismatch the reverse engineer will be prompted for a decision. For example in this case the plugin determined the start of the bytecode to be at `0x40489c`, while the parameter for the function was `0x40489a`. This triggered a mismatch and the user is prompted with a decision which value should be used. In this case the function parameter `0x40489a` was indeed the start and should have been used as byte code start value.
 
 
 ![alt text](screenshots/static2.png "Static Deobfuscate")
@@ -139,12 +140,12 @@ The trace optimizations viewer provides a way to dynamically interact with the t
 
 ![alt text](screenshots/optimizations2.png "Optimizations Viewer")
  
-|:---:|:---|
-Constant Propagation| Constants are propagated where possible. This means registers are switched with their values and offsets which can be computed will be computed.
-Stack Address Propagation| Every time a stack address is read the value on the stack address will be available as Stack comment.
-Operation Standardisation (folding)| A weaker version of the peephole optimization which standardizes certain operations.
-Unused Operand Folding (folding)| Operands that are not used in later execution steps are purged from the trace.
-Peephole (folding)| The trace is traversed for specific patterns which are then replaced or deleted if deemed unnecessary.
+|:---:|:--- |
+Constant Propagation | Constants are propagated where possible. This means registers are switched with their values and offsets which can be computed will be computed.
+Stack Address Propagation | Every time a stack address is read the value on the stack address will be available as Stack comment.
+Operation Standardisation (folding) | A weaker version of the peephole optimization which standardizes certain operations.
+Unused Operand Folding (folding) | Operands that are not used in later execution steps are purged from the trace.
+Peephole (folding) | The trace is traversed for specific patterns which are then replaced or deleted if deemed unnecessary.
 
 Propagations should be always save to use, as they do not leave out anything. Foldings should be used with care, as they leave out lines deemed unuseful and as such might leave out too much.
 
@@ -218,14 +219,15 @@ Upon selection the user will be prompted for all the values:
 
 ![alt text](screenshots/manual_dynamic.png "Manual Dynamic Overview")
 
-**Follow Virtual Register:**
-    This provides a manual interface to the register tracking functionality. 
-**Find Virtual Reg to Reg mapping:**
-    This function helps to map the stack addresses of the output from the virtual machine function to the registers in which those values are returned.
-**Find VM Function Output Parameter**
-**Find VM Function Input Parameter**
-**Address Count:**
-    The address count reads in a trace and returns in **IDA**s output window the ratio: (Address : frequency of occurrence). The Disasm is also displayed.
+**Follow Virtual Register:** This provides a manual interface to the register tracking functionality. 
+    
+**Find Virtual Reg to Reg mapping:** This function helps to map the stack addresses of the output from the virtual machine function to the registers in which those values are returned.
+    
+**Find VM Function Output Parameter** Finds function output parameter.
+    
+**Find VM Function Input Parameter** Finds function input parameter.
+
+**Address Count:** The address count reads in a trace and returns in **IDA**s output window the ratio: (Address : frequency of occurrence). The Disasm is also displayed.
 
 ###Settings
 
@@ -233,20 +235,20 @@ Upon selection the user will be prompted for all the values:
 
 The Settings provide the necessary interface to enable the user to change values on the fly or even input own values if the ones determined by the plugin are wrong. Further changes in the default behaviour of the program can also be selected or deselected.  
 
-|:----   | :----|
-|Code Start                   | the byte code start|
-|Base Addr                    | the base address of the jump table|
-|Code End                     | the byte code end|
-|VM Addr                      | the start address of the virtual machine function|
-|Show Basic Blocks            | show basic blocks during clustering analysis|
-|Greedy Clustering            | cluster until no more clusters are found|
-|Cluster Heuristic            | after how many repetitions an address becomes a cluster|
-|Input/Output Importance      | Importance of input/output analysis for the grading system (set to 0 to disable)|
-|Clustering Importance        | Importance of clustering analysis for the grading system (set to 0 to disable)|
-|Pattern Matching Importance | Importance of pattern matching analysis for the grading system (set to 0 to disable)|
-|Memory usage Importance     | Importance of memory instructions analysis for the grading system (set to 0 to disable)|
-|Step Into System Libraries  | Should system libraries be disregarded during trace generation|
-|Extract function parameters | Should function parameters be extracted during trace generation|
+|:---- |:---- |
+Code Start | the byte code start
+Base Addr | the base address of the jump table
+Code End | the byte code end
+VM Addr | the start address of the virtual machine function
+Show Basic Blocks | show basic blocks during clustering analysis
+Greedy Clustering | cluster until no more clusters are found
+Cluster Heuristic | after how many repetitions an address becomes a cluster
+Input/Output Importance | Importance of input/output analysis for the grading system (set to 0 to disable)
+Clustering Importance | Importance of clustering analysis for the grading system (set to 0 to disable)
+Pattern Matching Importance | Importance of pattern matching analysis for the grading system (set to 0 to disable)
+Memory usage Importance | Importance of memory instructions analysis for the grading system (set to 0 to disable)
+Step Into System Libraries | Should system libraries be disregarded during trace generation
+Extract function parameters | Should function parameters be extracted during trace generation
 
 ##Quick start guide
 
