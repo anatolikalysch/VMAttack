@@ -64,7 +64,7 @@ But how can you actually get one? The two currently supported possibilities are 
 
 A reverse engineer can decide to save an analyzed trace as a .json file which can be loaded later on to continue analysis. This provides a convenient way to experiment on traces and combine different analysis together for improved results.
 
-###What is actually a trace?
+###What is a trace?
 
 In the plugin context a trace is a list object of trace lines. Each trace line consists of four basic values:
 
@@ -73,7 +73,7 @@ In the plugin context a trace is a list object of trace lines. Each trace line c
 - The instruction
 - The CPU Context **after** execution
 
-additionally a trace line can contain:
+additionally a VMAttack trace line can contain:
 
 - A stack comment
 - A grade
@@ -140,12 +140,15 @@ The trace optimizations viewer provides a way to dynamically interact with the t
 
 ![alt text](screenshots/optimizations2.png "Optimizations Viewer")
  
-|:---:|:--- |
-Constant Propagation | Constants are propagated where possible. This means registers are switched with their values and offsets which can be computed will be computed.
-Stack Address Propagation | Every time a stack address is read the value on the stack address will be available as Stack comment.
-Operation Standardisation (folding) | A weaker version of the peephole optimization which standardizes certain operations.
-Unused Operand Folding (folding) | Operands that are not used in later execution steps are purged from the trace.
-Peephole (folding) | The trace is traversed for specific patterns which are then replaced or deleted if deemed unnecessary.
+**Constant Propagation**: Constants are propagated where possible. This means registers are switched with their values and offsets which can be computed will be computed.
+
+**Stack Address Propagation**: Every time a stack address is read the value on the stack address will be available as Stack comment.
+
+**Operation Standardisation (folding)**: A weaker version of the peephole optimization which standardizes certain operations.
+
+**Unused Operand Folding (folding)**: Operands that are not used in later execution steps are purged from the trace.
+
+**Peephole (folding)**: The trace is traversed for specific patterns which are then replaced or deleted if deemed unnecessary.
 
 Propagations should be always save to use, as they do not leave out anything. Foldings should be used with care, as they leave out lines deemed unuseful and as such might leave out too much.
 
@@ -235,20 +238,31 @@ Upon selection the user will be prompted for all the values:
 
 The Settings provide the necessary interface to enable the user to change values on the fly or even input own values if the ones determined by the plugin are wrong. Further changes in the default behaviour of the program can also be selected or deselected.  
 
-|:---- |:---- |
-Code Start | the byte code start
-Base Addr | the base address of the jump table
-Code End | the byte code end
-VM Addr | the start address of the virtual machine function
-Show Basic Blocks | show basic blocks during clustering analysis
-Greedy Clustering | cluster until no more clusters are found
-Cluster Heuristic | after how many repetitions an address becomes a cluster
-Input/Output Importance | Importance of input/output analysis for the grading system (set to 0 to disable)
-Clustering Importance | Importance of clustering analysis for the grading system (set to 0 to disable)
-Pattern Matching Importance | Importance of pattern matching analysis for the grading system (set to 0 to disable)
-Memory usage Importance | Importance of memory instructions analysis for the grading system (set to 0 to disable)
-Step Into System Libraries | Should system libraries be disregarded during trace generation
-Extract function parameters | Should function parameters be extracted during trace generation
+**Code Start**: the byte code start
+
+**Base Addr**: the base address of the jump table
+
+**Code End**: the byte code end
+
+**VM Addr**: the start address of the virtual machine function
+
+**Show Basic Blocks**: show basic blocks during clustering analysis
+
+**Greedy Clustering**: cluster until no more clusters are found
+
+**Cluster Heuristic**: after how many repetitions an address becomes a cluster
+
+**Input/Output Importance**: Importance of input/output analysis for the grading system (set to 0 to disable)
+
+**Clustering Importance**: Importance of clustering analysis for the grading system (set to 0 to disable)
+
+**Pattern Matching Importance**: Importance of pattern matching analysis for the grading system (set to 0 to disable)
+
+**Memory usage Importance**: Importance of memory instructions analysis for the grading system (set to 0 to disable)
+
+**Step Into System Libraries**: Should system libraries be disregarded during trace generation
+
+**Extract function parameters**: Should function parameters be extracted during trace generation
 
 ##Quick start guide
 
