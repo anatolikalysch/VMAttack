@@ -304,8 +304,33 @@ def grading_automaton(visualization=0):
 
     trace = prepare_trace()
     try:
+        ### INIT THE TRACE GRADES ###
         trace = init_grading(deepcopy(trace))
         w.pbar_update(10)
+
+        ### REGISTER USAGE BASED: this must be done before optimization
+        reg_dict = defaultdict(lambda: 0)
+
+        # find the register infrastructure and vm addressing scheme -> this tells us which registers are used for addressing and are not important for grading_automaton
+        for line in trace:
+            assert isinstance(line, Traceline)
+            if line.is_op2_reg and get_reg_class(line.disasm[2]) is not None:  # get reg class will only return != None for the 8-16 standard cpu regs
+                reg_dict[get_reg_class(line.disasm[2])] += 1
+
+        # get the sorted list of regs highest occurence first
+        sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
+        length = len(sorted_keys)
+        w.pbar_update(10)
+        # classify the important and less important registers
+        if length % 2 == 0:
+            important_regs = set(reg[0] for reg in sorted_keys[:(length / 2)])
+            disregard_regs = set(reg[0] for reg in sorted_keys[(length / 2):])
+        else:
+            # if this is the case, one more register gets declared unimportant, since it is better to be more careful about raising grades
+            important_regs = set(reg[0] for reg in sorted_keys[:(length - 1) / 2])
+            disregard_regs = set(reg[0] for reg in sorted_keys[(length - 1) / 2:])
+
+        ### OPTIMIZE TRACE ###
         try:
             if not trace.constant_propagation:
                 trace = optimization_const_propagation(trace)
@@ -318,6 +343,7 @@ def grading_automaton(visualization=0):
         except:
             pass
 
+        ### REGISTER USAGE AND INPUT OUTPUT BASED ###
         # raise the grade of line containing input and output values
         values = find_input(deepcopy(trace)).union(find_output(deepcopy(trace)))
         for line in trace:
@@ -326,19 +352,7 @@ def grading_automaton(visualization=0):
                     line.raise_grade(vmr.in_out)
 
         w.pbar_update(10)
-        # reg_dict = defaultdict(lambda: 0)
-        #
-        # # find the register infrastructure and vm addressing scheme -> this tells us which registers are used for addressing and are not important for grading_automaton
-        # for line in trace:
-        #     assert isinstance(line, Traceline)
-        #     if line.is_op1_reg:
-        #         reg_dict[line.disasm[1]] += 1
 
-        # classify important and less important registers TODO MAKE THIS AUTOMATIC, heuristic approach for classification
-        important_regs = [get_reg_class('eax'), get_reg_class('ecx'), get_reg_class('edx'), get_reg_class('ebx')]
-        disregard_regs = [get_reg_class('ebp'), get_reg_class('esp'), get_reg_class('esi'), get_reg_class('edi')]
-
-        w.pbar_update(10)
         # backtrace regs and raise grade
         virt_regs = find_virtual_regs(deepcopy(trace))
         for key in virt_regs:
@@ -358,8 +372,27 @@ def grading_automaton(visualization=0):
                                 other.lower_grade(vmr.in_out)
                     except ValueError:
                         print 'The line %s was not found in the trace, hence the grade could not be lowered properly!' % line.to_str_line()
-        w.pbar_update(10)
-        # lower the grades for the disregard registers
+        w.pbar_update(5)
+
+
+        ### REGISTER USAGE FREQUENCY BASED ###
+        # lower the grades for the most commonly used registers
+        for line in trace:
+            assert isinstance(line, Traceline)
+            if line.is_op1_reg and get_reg_class(line.disasm[1]) is not None:  # get reg class will only return != None for the 8-16 standard cpu regs
+                reg_dict[get_reg_class(line.disasm[1])] += 1
+
+        # get the sorted list of regs highest occurrence first
+        sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
+        length = len(sorted_keys)
+        w.pbar_update(5)
+        # classify the less important registers
+        if length % 2 == 0:
+            disregard_regs = set(reg[0] for reg in sorted_keys[:(length / 2)])
+        else:
+            disregard_regs = set(reg[0] for reg in sorted_keys[:(length - 1) / 2])
+
+
         for line in trace:
             assert isinstance(line, Traceline)
             if line.is_jmp or line.is_mov or line.is_pop or line.is_push or line.disasm[0].startswith('ret') or line.disasm[
@@ -368,12 +401,16 @@ def grading_automaton(visualization=0):
             elif len(line.disasm) > 1 and get_reg_class(line.disasm[1]) in disregard_regs:
                 line.lower_grade(vmr.pa_ma)
         w.pbar_update(10)
+
+        ### CLUSTERING BASED ###
         # raise the grades of the unique lines after clustering
         cluster_result = repetition_clustering(deepcopy(trace))
         for line in cluster_result:
             if isinstance(line, Traceline):
                 trace[trace.index(line)].raise_grade(vmr.clu)
         w.pbar_update(10)
+
+        ### PEEPHOLE GRADING ###
         # peephole grading
         for line in trace:
             assert isinstance(line, Traceline)
@@ -385,6 +422,8 @@ def grading_automaton(visualization=0):
                 line.raise_grade(vmr.pa_ma)
 
         w.pbar_update(10)
+
+        ### OPTIMIZATION BASED ###
         opti_trace = optimize(deepcopy(trace))
         w.pbar_update(10)
         for line in opti_trace:
