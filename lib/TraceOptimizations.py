@@ -218,8 +218,8 @@ def optimization_const_propagation(trace):
                     pass
 
             # inst reg
-            elif get_reg_class(line.disasm[1]) is not None and line.disasm[0] not in ['pop', 'push']:
-                line.disasm[1] = prev_line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)]
+            # elif get_reg_class(line.disasm[1]) is not None and line.disasm[0] not in ['pop', 'push']:
+            #     line.disasm[1] = prev_line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)]
 
 
     trace.constant_propagation = True
