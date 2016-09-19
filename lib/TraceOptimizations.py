@@ -1,4 +1,6 @@
 # coding=utf-8
+from collections import defaultdict
+
 __author__ = 'Anatoli Kalysch'
 
 from dynamic.TraceRepresentation import Trace, Traceline
@@ -18,8 +20,16 @@ def optimization_peephole_folding(trace):
     :return:
     """
     kill_index = []
-    for line in trace:
 
+    # frequency based peephole - remove the one most common address cluster, since it will most certainly be part of the handler
+    addrs = [line.addr for line in trace]
+    addrs = {addr: addrs.count(addr) for addr in addrs}
+    max_val = max(set(addrs.values()))
+    # this method will work even if the handler consists of several basic blocks, as long as they have the same occurrence frequency in the trace
+    kill_index.extend([line for line in trace if line.addr in [addrs[key] for key in addrs.keys() if addrs[key] == max_val]])
+
+    for line in trace:
+        #start instruction based peephole
         assert isinstance(line, Traceline)
         try:
             next_line = trace[trace.index(line) + 1]
@@ -44,6 +54,8 @@ def optimization_peephole_folding(trace):
         elif len(line.disasm) == 2:
             if line.disasm[0].startswith('inc') and get_reg_class(line.disasm[1]) > 4:
                 kill_index.append(line)
+            elif line.disasm[0].startswith('dec') and get_reg_class(line.disasm[1]) > 4:
+                kill_index.append(line)
 
         ### optimizations for inst with no operand
         elif len(line.disasm) == 1:
@@ -57,14 +69,15 @@ def optimization_peephole_folding(trace):
                 if line not in kill_index:
                     kill_index.append(line)
 
-    for line in trace:
-        assert isinstance(line, Traceline)
-        if line.is_mov:
-            kill_index.append(line)
+    # prev optimization dependant optimizations
+    if trace.constant_propagation and trace.stack_addr_propagation:
+        for line in trace:
+            # after the propagation optimizations we can remove stack to register interaction (but *not* the register to stack)
+            if line.is_mov and line.is_op1_reg and line.is_op2_mem:
+                kill_index.append(line)
 
-
-
-    for line in kill_index:
+    # remove the unuseful declared lines from the trace
+    for line in set(kill_index):  # set to remove duplicates which would throw ValueErrors
         trace.pop(trace.index(line))
 
     trace.peephole = True
