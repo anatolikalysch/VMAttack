@@ -43,7 +43,7 @@ class StackChangeViewer(PluginViewer):
         # tree view
         self.treeView = QtGui.QTreeView()
         self.treeView.setExpandsOnDoubleClick(True)
-        self.treeView.setSortingEnabled(True)
+        self.treeView.setSortingEnabled(False)
         self.treeView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
 
         ### populate widgets
