@@ -73,7 +73,7 @@ In the case of addvmp it will be enough to select the highest grade to be presen
 
 Lets assume we have a more complicated function and the _grading analysis_ did not lead us to the relevant instructions.
 One of the _semi-automated analysis_ capabilities could present a viable alternative or even show us which analysis function failed the grading system.
-The _input/output analysis_ could provide leads as to how the input arguments of the VM function are used and whether there is a connection between function input and function output. By checking the two input values `AFFE1` and `BABE5` and additionally the output value `16ABC6` it becomes evident which register contains the important instructions for out obfuscated function and how the `eax` return value came to be `16ABC6`.
+The _input/output analysis_ could provide leads as to how the input arguments of the VM function are used and whether there is a connection between function input and function output. By checking the two input values `AFFE1` and `BABE5` and additionally the output value `16ABC6` it becomes evident which register contains the important instructions for our obfuscated function and how the `eax` return value came to be `16ABC6` (=AFFE1+BABE5).
 
 ![alt text](screenshots/InputOutput3.png "Input/Output Success")
 
@@ -224,15 +224,17 @@ As an example lets assume we are interested in the value of the `eax` register. 
 
 By checking the check boxes of the values the viewer adds colorization to them:
 
-- Yellow: input values
-- Red: output values
-- Green: both
+- Rust red: input values
+- Violet: output values
+- Olive: both
 
-![alt text](screenshots/InputOutput3.png "Input/Output Success")
+Colorization takes into account not only values used in the disasm section **but also the CPU context!**
 
-If a register turns green it is an indication, that its trace lines contain both a input and an output parameter. This means the register handles both the selected input and output values and either computations take place or the values are part of the trace lines CPU context.
+![alt text](screenshots/InputOutput2.png "Input/Output Success")
 
-![alt text](screenshots/InputOutput2.png "Input/Output Viewer")
+If a register turns olive it is an indication, that its trace lines contain both a input and an output parameter. This means the register handles both the selected input and output values and either computations take place or the values are part of the trace lines CPU context.
+
+![alt text](screenshots/InputOutput3.png "Input/Output Viewer")
 
 **Clustering Analysis**
 
