@@ -34,11 +34,11 @@ class UIManager(object):
     # initial menu grab
     def get_init_menu(self):
         try:
-            self.widget = form_to_widget(idaapi.find_tform('Output window'))
+            self.widget = form_to_widget(form_to_widget(idaapi.find_tform('Output window')))
             if self.widget is None:
                 raise Exception()
         except:
-            self.widget = form_to_widget('Output window')
+            self.widget = form_to_widget(idaapi.find_tform('Output window'))
         self.window = self.widget.window()
         self.menu = self.window.findChild(QtWidgets.QMenuBar)
 
