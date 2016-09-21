@@ -34,7 +34,7 @@ class UIManager(object):
     # initial menu grab
     def get_init_menu(self):
         try:
-            self.widget = form_to_widget(idaapi.get_current_tform())
+            self.widget = form_to_widget(idaapi.find_tform('Output window'))
             if self.widget is None:
                 raise Exception()
         except:
