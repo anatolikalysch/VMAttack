@@ -2,15 +2,14 @@
 __author__ = 'Anatoli Kalysch'
 
 from ui.PluginViewer import PluginViewer
-from ui.UIManager import QtGui, QtCore, QtWidgets
-# from PyQt5 import QtGui, QtCore, QtWidgets
+from ui.UIManager import QtGui
 
 
 ####################
 ### STACK CHANGE ###
 ####################
 class StackChangeViewer(PluginViewer):
-    def __init__(self, vr, sorted, stack_changes, title='Stack Changes Analysis'):
+    def __init__(self, vr, sorted, stack_changes, title='Stack Changes Analysis (legacy)'):
         # context should be a dictionary containing the backward traced result of each relevant register
         super(StackChangeViewer, self).__init__(title)
         self.vr = vr
@@ -42,10 +41,10 @@ class StackChangeViewer(PluginViewer):
         self.sim.setHorizontalHeaderLabels(['Stack Address', 'Address Mapped to CPU Reg', 'Value Changes during Execution'])
 
         # tree view
-        self.treeView = QtWidgets.QTreeView()
+        self.treeView = QtGui.QTreeView()
         self.treeView.setExpandsOnDoubleClick(True)
         self.treeView.setSortingEnabled(False)
-        self.treeView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.treeView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
 
         ### populate widgets
         # fill model with data
@@ -53,7 +52,7 @@ class StackChangeViewer(PluginViewer):
 
         self.treeView.setModel(self.sim)
         # finalize layout
-        layout = QtWidgets.QGridLayout()
+        layout = QtGui.QGridLayout()
         layout.addWidget(self.treeView)
 
         self.parent.setLayout(layout)

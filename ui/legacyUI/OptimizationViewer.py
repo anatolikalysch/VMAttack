@@ -10,16 +10,15 @@ from lib.TraceAnalysis import repetition_clustering, find_virtual_regs, create_b
 from lib.TraceOptimizations import optimizations, optimization_names, optimization_selective_register_folding
 from ui.NotifyProgress import NotifyProgress
 from ui.PluginViewer import PluginViewer
-from ui.UIManager import QtGui, QtCore, QtWidgets
+from ui.UIManager import QtGui, QtCore
 from ui.UIManager import ClusterViewer
-# from PyQt5 import QtGui, QtCore, QtWidgets
 
 
 ###########################
 ### Trace Optimizations ###
 ###########################
 class OptimizationViewer(PluginViewer):
-    def __init__(self, trace, title='Optimizations', **kwargs):
+    def __init__(self, trace, title='Optimizations (legacy)', **kwargs):
         # context should be a dictionary containing the backward traced result of each relevant register
         super(OptimizationViewer, self).__init__(title)
         self.orig_trace = trace
@@ -66,44 +65,44 @@ class OptimizationViewer(PluginViewer):
         self.sim.setHorizontalHeaderLabels(['ThreadId', 'Address', 'Disasm', 'Stack Comment', 'CPU Context'])
 
     def PopulateOptimizationsToolbar(self):
-        self.ftb.addWidget(QtWidgets.QLabel('Available Optimizations (check to run on trace): '))
-        self.cpcb = QtWidgets.QCheckBox(optimization_names[0])
+        self.ftb.addWidget(QtGui.QLabel('Available Optimizations (check to run on trace): '))
+        self.cpcb = QtGui.QCheckBox(optimization_names[0])
         self.cpcb.stateChanged.connect(lambda: self.OptimizeTrace(self.cpcb))
         self.ftb.addWidget(self.cpcb)
         self.ftb.addSeparator()
 
-        self.sacb = QtWidgets.QCheckBox(optimization_names[1])
+        self.sacb = QtGui.QCheckBox(optimization_names[1])
         self.sacb.stateChanged.connect(lambda: self.OptimizeTrace(self.sacb))
         self.ftb.addWidget(self.sacb)
         self.ftb.addSeparator()
 
-        self.oscb = QtWidgets.QCheckBox(optimization_names[2])
+        self.oscb = QtGui.QCheckBox(optimization_names[2])
         self.oscb.stateChanged.connect(lambda: self.OptimizeTrace(self.oscb))
         self.ftb.addWidget(self.oscb)
         self.ftb.addSeparator()
 
-        self.uocb = QtWidgets.QCheckBox(optimization_names[3])
+        self.uocb = QtGui.QCheckBox(optimization_names[3])
         self.uocb.stateChanged.connect(lambda: self.OptimizeTrace(self.uocb))
         self.ftb.addWidget(self.uocb)
         self.ftb.addSeparator()
 
-        self.pcb = QtWidgets.QCheckBox(optimization_names[4])
+        self.pcb = QtGui.QCheckBox(optimization_names[4])
         self.pcb.stateChanged.connect(lambda: self.OptimizeTrace(self.pcb))
         self.ftb.addWidget(self.pcb)
         self.ftb.addSeparator()
 
     def PopulateSelectiveRegsToolbar(self):
-        self.stb.addWidget(QtWidgets.QLabel('Selective Register Folding: '))
+        self.stb.addWidget(QtGui.QLabel('Selective Register Folding: '))
         assert isinstance(self.trace, Trace)
         if self.trace.ctx_reg_size == 32:
             for i in range(8):
-                self.foldable_regs.append(QtWidgets.QCheckBox(get_reg_by_size(i, self.trace.ctx_reg_size)))
+                self.foldable_regs.append(QtGui.QCheckBox(get_reg_by_size(i, self.trace.ctx_reg_size)))
                 self.foldable_regs[-1].stateChanged.connect(lambda: self.FoldRegs())
                 self.stb.addWidget(self.foldable_regs[-1])
                 self.stb.addSeparator()
         elif self.trace.ctx_reg_size == 64:
             for i in range(16):
-                self.foldable_regs.append(QtWidgets.QCheckBox(get_reg_by_size(i, self.trace.ctx_reg_size)))
+                self.foldable_regs.append(QtGui.QCheckBox(get_reg_by_size(i, self.trace.ctx_reg_size)))
                 self.foldable_regs[-1].stateChanged.connect(lambda: self.FoldRegs())
                 self.stb.addWidget(self.foldable_regs[-1])
                 self.stb.addSeparator()
@@ -116,15 +115,15 @@ class OptimizationViewer(PluginViewer):
         self.sim.setHorizontalHeaderLabels(['ThreadId', 'Address', 'Disasm', 'Stack Comment', 'CPU Context'])
 
         # toolbar
-        self.ftb = QtWidgets.QToolBar()
-        self.stb = QtWidgets.QToolBar()
+        self.ftb = QtGui.QToolBar()
+        self.stb = QtGui.QToolBar()
 
         # tree view
-        self.treeView = QtWidgets.QTreeView()
+        self.treeView = QtGui.QTreeView()
         self.treeView.setToolTip('Filter instructions from trace by double clicking on them.')
         self.treeView.setExpandsOnDoubleClick(True)
         self.treeView.setSortingEnabled(False)
-        self.treeView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.treeView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         # Context menus
         self.treeView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.treeView.customContextMenuRequested.connect(self.OnCustomContextMenu)
@@ -139,7 +138,7 @@ class OptimizationViewer(PluginViewer):
         self.PopulateOptimizationsToolbar()
         self.PopulateSelectiveRegsToolbar()
         # finalize layout
-        layout = QtWidgets.QGridLayout()
+        layout = QtGui.QGridLayout()
         layout.addWidget(self.ftb)
         layout.addWidget(self.stb)
         layout.addWidget(self.treeView)
@@ -180,7 +179,7 @@ class OptimizationViewer(PluginViewer):
         except:
             return False
 
-    @QtCore.pyqtSlot(QtCore.QModelIndex)
+    @QtCore.Slot(QtCore.QModelIndex)
     def ItemDoubleClickSlot(self, index):
         """
         TreeView DoubleClicked Slot.
@@ -194,20 +193,16 @@ class OptimizationViewer(PluginViewer):
 
         self.PopulateModel(self.trace)
 
-    @QtCore.pyqtSlot(QtCore.QPoint)
+    @QtCore.Slot(QtCore.QPoint)
     def OnCustomContextMenu(self, point):
-        menu = QtWidgets.QMenu()
+        menu = QtGui.QMenu()
         # Actions
-        action_undo = QtWidgets.QAction('Undo', self.treeView)
-        action_undo.triggered.connect(self.Undo)
-        action_restore = QtWidgets.QAction('Restore original trace', self.treeView)
-        action_restore.triggered.connect(self.Restore)
-        action_forward_to_clustering = QtWidgets.QAction("Open in Clustering Analysis", self.treeView)
-        action_forward_to_clustering.triggered.connect(self.ClusterForward)
-        action_export_trace = QtWidgets.QAction('Export this trace...', self.treeView)
-        action_export_trace.triggered.connect(self.SaveTrace)
-        action_close_viewer = QtWidgets.QAction('Close Viewer', self.treeView)
-        action_close_viewer.triggered.connect(lambda: self.Close(4))
+        action_undo = QtGui.QAction('Undo', self.treeView, triggered=lambda: self.Undo())
+        action_restore = QtGui.QAction('Restore original trace', self.treeView, triggered=lambda: self.Restore())
+        action_forward_to_clustering = QtGui.QAction("Open in Clustering Analysis", self.treeView, triggered=lambda: self.ClusterForward())
+        action_export_trace = QtGui.QAction('Export this trace...', self.treeView, triggered=lambda: self.SaveTrace())
+        action_close_viewer = QtGui.QAction('Close Viewer', self.treeView, triggered=lambda: self.Close(4))
+
         # add actions to menu
         menu.addAction(action_undo)
         menu.addAction(action_restore)
@@ -218,7 +213,7 @@ class OptimizationViewer(PluginViewer):
 
         menu.exec_(self.treeView.viewport().mapToGlobal(point))
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def ClusterForward(self):
         # cluster
         vr = find_virtual_regs(deepcopy(self.trace))
@@ -227,18 +222,18 @@ class OptimizationViewer(PluginViewer):
         v0.Show()
         # Do not display StackChangeViewer. After the user worked on the trace it will be heavily malformed and missing crutial information for a stack change analysis, so the stack change view will do more harm than good.
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def SaveTrace(self):
         if self.save is not None:
             self.save(self.trace)
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def Undo(self):
         self.trace = self.undo_stack[-1]
         self.last_cb.setCheckState(QtCore.Qt.Unchecked)
         self.PopulateModel(self.trace)
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def Restore(self):
         self.undo_stack = [self.orig_trace]
         self.order = []

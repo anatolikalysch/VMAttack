@@ -4,15 +4,16 @@ __author__ = 'Anatoli Kalysch'
 
 from threading import Thread
 
+from ui.UIManager import GradingViewer
+from ui.UIManager import OptimizationViewer
+from ui.UIManager import StackChangeViewer
+from ui.UIManager import VMInputOuputViewer
+
 from DebuggerHandler import load, save, get_dh
 from lib.TraceAnalysis import *
 from lib.VMRepresentation import get_vmr
-from ui.ClusterViewer import ClusterViewer
-from ui.GradingViewer import GradingViewer
 from ui.NotifyProgress import NotifyProgress
-from ui.OptimizationViewer import OptimizationViewer
-from ui.StackChangeViewer import StackChangeViewer
-from ui.VMInputOutputViewer import VMInputOuputViewer
+from ui.UIManager import ClusterViewer
 
 
 ### DEBUGGER LOADING STRATEGIES ###
@@ -374,7 +375,6 @@ def grading_automaton(visualization=0):
                         print 'The line %s was not found in the trace, hence the grade could not be lowered properly!' % line.to_str_line()
         w.pbar_update(5)
 
-
         ### REGISTER USAGE FREQUENCY BASED ###
         # lower the grades for the most commonly used registers
         for line in trace:
@@ -441,8 +441,18 @@ def grading_automaton(visualization=0):
             else:
                 trace[trace.index(line)].lower_grade(vmr.pa_ma)
 
-        w.pbar_update(10)
+        w.pbar_update(5)
 
+        ### STATIC OPTIMIZATION BASED ###
+        # Instruction types TODO
+        # IRmap = {'vpush':Traceline.is_push, 'vpop':'pop', 'vjmp':'jmp', 'vadd':'add', }
+        # get comments from bytecode
+        try:
+            comments = set(v_inst.split(' ')[0] for v_inst in [Comment(ea) for ea in range(vmr.code_start, vmr.code_end)])
+            # TODO filter relevant instructions from PseudoInstructions and raise their grade in trace
+        except:
+            pass
+        w.pbar_update(5)
         w.close()
 
         grades = set([line.grade for line in trace])

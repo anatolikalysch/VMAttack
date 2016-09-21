@@ -10,9 +10,7 @@ from _collections import defaultdict, deque
 from lib.VMRepresentation import get_vmr
 from dynamic.TraceRepresentation import Traceline
 from ui.PluginViewer import PluginViewer
-from ui.UIManager import QtGui, QtCore, QtWidgets
-# from PyQt5 import QtGui, QtCore, QtWidgets
-
+from ui.UIManager import QtGui, QtCore
 from lib.TraceAnalysis import cluster_removal
 
 from idaapi import is_basic_block_end
@@ -23,7 +21,7 @@ from idc import AskLong
 ### CLUSTERING ANALYSIS ###
 ###########################
 class ClusterViewer(PluginViewer):
-    def __init__(self, clustered_trace, bb_func, ctx_reg_size, title='Clustering Analysis Result', save_func=None):
+    def __init__(self, clustered_trace, bb_func, ctx_reg_size, title='Clustering Analysis Result (legacy)', save_func=None):
         # context should be a dictionary containing the backward traced result of each relevant register
         super(ClusterViewer, self).__init__(title)
         self.orig_trace = clustered_trace
@@ -121,10 +119,10 @@ class ClusterViewer(PluginViewer):
         self.sim = QtGui.QStandardItemModel()
 
         # tree view
-        self.treeView = QtWidgets.QTreeView()
+        self.treeView = QtGui.QTreeView()
         self.treeView.setExpandsOnDoubleClick(True)
         self.treeView.setSortingEnabled(False)
-        self.treeView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.treeView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.treeView.setToolTip('Filter instructions/clusters/basic blocks from trace by double clicking on them.')
         # Context menus
         self.treeView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -139,7 +137,7 @@ class ClusterViewer(PluginViewer):
 
         # self.treeView.setFirstColumnSpanned(0, self.treeView.rootIndex(), True)
         # finalize layout
-        layout = QtWidgets.QGridLayout()
+        layout = QtGui.QGridLayout()
         layout.addWidget(self.treeView)
 
         self.parent.setLayout(layout)
@@ -150,7 +148,7 @@ class ClusterViewer(PluginViewer):
         except:
             return False
 
-    @QtCore.pyqtSlot(QtCore.QModelIndex)
+    @QtCore.Slot(QtCore.QModelIndex)
     def ItemDoubleClickSlot(self, index):
         """
         TreeView DoubleClicked Slot.
@@ -208,9 +206,9 @@ class ClusterViewer(PluginViewer):
 
         self.PopulateModel()
 
-    @QtCore.pyqtSlot(QtCore.QPoint)
+    @QtCore.Slot(QtCore.QPoint)
     def OnCustomContextMenu(self, point):
-        menu = QtWidgets.QMenu()
+        menu = QtGui.QMenu()
         init_index = self.treeView.indexAt(point)
         index = self.treeView.indexAt(point)
         level = 0
@@ -227,23 +225,19 @@ class ClusterViewer(PluginViewer):
         elif level == 2:
             text = "Remove Line"
         try:
-            action_remove = QtWidgets.QAction(text, self.treeView)
-            action_remove.triggered.connect(lambda: self.ItemDoubleClickSlot(init_index))
+            action_remove = QtGui.QAction(text, self.treeView, triggered=lambda: self.ItemDoubleClickSlot(init_index))
             menu.addAction(action_remove)
             menu.addSeparator()
         except:
             print '[*] An Exception occured, remove action could not be added to the menu!'
         # Actions
-        action_remove_threshold = QtWidgets.QAction('Remove several clusters...', self.treeView)
-        action_remove_threshold.triggered.connect(self.ClusterRemoval)
-        action_undo = QtWidgets.QAction('Undo', self.treeView)
-        action_undo.triggered.connect(self.Undo)
-        action_restore = QtWidgets.QAction('Restore original trace', self.treeView)
-        action_restore.triggered.connect(self.Restore)
-        action_export_trace = QtWidgets.QAction('Export this trace ...', self.treeView)
-        action_export_trace.triggered.connect(self.SaveTrace)
-        action_close_viewer = QtWidgets.QAction('Close Viewer', self.treeView)
-        action_close_viewer.triggered.connect(lambda: self.Close(4))
+        action_remove_threshold = QtGui.QAction('Remove several clusters...', self.treeView, triggered=lambda: self.ClusterRemoval())
+
+        action_undo = QtGui.QAction('Undo', self.treeView, triggered=lambda: self.Undo())
+        action_restore = QtGui.QAction('Restore original trace', self.treeView, triggered=lambda: self.Restore())
+        action_export_trace = QtGui.QAction('Export this trace ...', self.treeView,
+                                            triggered=lambda: self.SaveTrace())
+        action_close_viewer = QtGui.QAction('Close Viewer', self.treeView, triggered=lambda: self.Close(4))
 
         # add actions to menu
         menu.addAction(action_remove_threshold)
@@ -255,24 +249,24 @@ class ClusterViewer(PluginViewer):
 
         menu.exec_(self.treeView.viewport().mapToGlobal(point))
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def ClusterRemoval(self):
         threshold = AskLong(1, 'How many most common clusters do you want removed?')
         self.undo_stack.append(deepcopy(self.trace))
         self.trace = cluster_removal(deepcopy(self.trace), threshold=threshold)
         self.PopulateModel()
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def SaveTrace(self):
         if self.save is not None:
             self.save(self.trace)
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def Undo(self):
         self.trace = self.undo_stack[-1]
         self.PopulateModel()
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def Restore(self):
         self.undo_stack = deque([deepcopy(self.trace)], maxlen=3)
         self.trace = deepcopy(self.orig_trace)

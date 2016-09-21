@@ -1,13 +1,13 @@
 # coding=utf-8
 __author__ = 'Anatoli Kalysch'
 
-from UIManager import QtGui, QtCore
+from UIManager import QtWidgets
 
-class NotifyProgress(QtGui.QWidget):
+class NotifyProgress(QtWidgets.QWidget):
     def __init__(self, name='current', *args, **kwargs):
         super(NotifyProgress, self).__init__(*args, **kwargs)
         self.analysis = name
-        self.pbar = QtGui.QProgressBar(self)
+        self.pbar = QtWidgets.QProgressBar(self)
         self.pbar.setGeometry(30, 40, 370, 25)
         self.value = 0
         self.setFixedSize(400, 100)

@@ -1,9 +1,9 @@
 # coding=utf-8
 __author__ = 'Anatoli Kalysch'
 
-from UIManager import QtGui, QtCore
+from UIManager import QtCore, QtWidgets
 
-class AboutWindow(QtGui.QDialog):
+class AboutWindow(QtWidgets.QDialog):
     def __init__(self, *args, **kwargs):
         super(AboutWindow, self).__init__(*args, **kwargs)
         self.setFixedSize(600, 250)
@@ -31,7 +31,7 @@ class AboutWindow(QtGui.QDialog):
         self.show()
 
     def config_label(self, name, size, bold=False, alignment="center"):
-        label = QtGui.QLabel(name, self)
+        label = QtWidgets.QLabel(name, self)
         label.setWordWrap(True)
         font = label.font()
         font.setPointSize(size)

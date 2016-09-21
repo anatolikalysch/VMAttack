@@ -5,15 +5,14 @@ from copy import deepcopy
 from dynamic.TraceRepresentation import Traceline
 from lib.Register import get_reg_class
 from ui.PluginViewer import PluginViewer
-from ui.UIManager import QtGui, QtCore, QtWidgets
-# from PyQt5 import QtGui, QtCore, QtWidgets
+from ui.UIManager import QtGui, QtCore
 
 
 #############################
 ### INPUT OUTPUT ANALYSIS ###
 #############################
 class VMInputOuputViewer(PluginViewer):
-    def __init__(self, input_set, output_set, output_ctx, title='Input/Output Analysis'):
+    def __init__(self, input_set, output_set, output_ctx, title='Input/Output Analysis (legacy)'):
         # context should be a dictionary containing the backward traced result of each relevant register
         super(VMInputOuputViewer, self).__init__(title)
         self.input = input_set
@@ -29,7 +28,6 @@ class VMInputOuputViewer(PluginViewer):
                           3:QtGui.QBrush(QtGui.QColor(157,151,84))}  # BOTH values, mix of both colors
 
     def PopulateModel(self):
-        self.CleanModel()
         assert isinstance(self.ctx, dict)
         for key in self.ctx.keys():
             if get_reg_class(key) is not None:
@@ -72,21 +70,22 @@ class VMInputOuputViewer(PluginViewer):
         self.treeView.resizeColumnToContents(3)
         self.treeView.resizeColumnToContents(4)
 
+
     def PopulateUpperToolbar(self):
         assert isinstance(self.input, set)
-        self.utb.addWidget(QtWidgets.QLabel('Input values found (check to highlight in trace): '))
+        self.utb.addWidget(QtGui.QLabel('Input values found (check to highlight in trace): '))
         for value in self.input:
-            self.ucb_map.append(QtWidgets.QCheckBox(value))
-            self.ucb_map[-1].stateChanged.connect(self.OnValueChecked)
+            self.ucb_map.append(QtGui.QCheckBox(value))
+            self.ucb_map[-1].stateChanged.connect(lambda: self.OnValueChecked())
             self.utb.addWidget(self.ucb_map[-1])
             self.utb.addSeparator()
 
     def PopulateLowerToolbar(self):
         assert isinstance(self.input, set)
-        self.ltb.addWidget(QtWidgets.QLabel('Output values found (check to highlight in trace): '))
+        self.ltb.addWidget(QtGui.QLabel('Output values found (check to highlight in trace): '))
         for value in self.output:
-            self.lcb_map.append(QtWidgets.QCheckBox(value))
-            self.lcb_map[-1].stateChanged.connect(self.OnValueChecked)
+            self.lcb_map.append(QtGui.QCheckBox(value))
+            self.lcb_map[-1].stateChanged.connect(lambda: self.OnValueChecked())
             self.ltb.addWidget(self.lcb_map[-1])
             self.ltb.addSeparator()
 
@@ -97,13 +96,13 @@ class VMInputOuputViewer(PluginViewer):
         self.sim.setHorizontalHeaderLabels(['ThreadId', 'Address', 'Disasm', 'Stack Comment', 'CPU Context'])
 
         # toolbar
-        self.utb = QtWidgets.QToolBar()
-        self.ltb = QtWidgets.QToolBar()
+        self.utb = QtGui.QToolBar()
+        self.ltb = QtGui.QToolBar()
         # tree view
-        self.treeView = QtWidgets.QTreeView()
+        self.treeView = QtGui.QTreeView()
         self.treeView.setExpandsOnDoubleClick(True)
         self.treeView.setSortingEnabled(False)
-        self.treeView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.treeView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.treeView.setToolTip('Highlights:\n Rust red - Input\n Violet - Output\n Olive - Both')
 
         ### populate widgets
@@ -114,7 +113,7 @@ class VMInputOuputViewer(PluginViewer):
         self.PopulateLowerToolbar()
         self.treeView.setModel(self.sim)
         # finalize layout
-        layout = QtWidgets.QGridLayout()
+        layout = QtGui.QGridLayout()
         layout.addWidget(self.utb)
         layout.addWidget(self.treeView)
         layout.addWidget(self.ltb)
@@ -137,6 +136,7 @@ class VMInputOuputViewer(PluginViewer):
                 self.selection['lower'].append(check_box.text())
             elif not check_box.isChecked() and check_box.text() in self.selection['lower']:
                 self.selection['lower'].remove(check_box.text())
+        self.CleanModel()
         self.PopulateModel()
 
     def isVisible(self):

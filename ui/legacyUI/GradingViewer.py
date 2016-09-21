@@ -3,18 +3,24 @@ from ui.NotifyProgress import NotifyProgress
 
 __author__ = 'Anatoli Kalysch'
 
+
+import os
+import json
+import time
+
+from idaapi import get_root_filename
+
 from dynamic.TraceRepresentation import Traceline
 from idc import AskLong
 from ui.PluginViewer import PluginViewer
-from ui.UIManager import QtGui, QtCore, QtWidgets
-# from PyQt5 import QtGui, QtCore, QtWidgets
+from ui.UIManager import QtGui, QtCore
 
 
 ###########################
 ### GradingSys Analysis ###
 ###########################
 class GradingViewer(PluginViewer):
-    def __init__(self, trace, title='Grading System Analysis', **kwargs):
+    def __init__(self, trace, title='Grading System Analysis (legacy)', **kwargs):
         # context should be a dictionary containing the backward traced result of each relevant register
         super(GradingViewer, self).__init__(title)
         self.trace = trace
@@ -68,15 +74,15 @@ class GradingViewer(PluginViewer):
         self.sim.setHorizontalHeaderLabels(['ThreadId', 'Address', 'Disasm', 'Stack Comment', 'CPU Context'])
 
         # toolbar
-        self.ftb = QtWidgets.QToolBar()
-        self.stb = QtWidgets.QToolBar()
+        self.ftb = QtGui.QToolBar()
+        self.stb = QtGui.QToolBar()
 
         # tree view
-        self.treeView = QtWidgets.QTreeView()
+        self.treeView = QtGui.QTreeView()
         self.treeView.setToolTip('Double click a grade to filter')
         self.treeView.setExpandsOnDoubleClick(True)
         self.treeView.setSortingEnabled(False)
-        self.treeView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.treeView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         # Context menus
         self.treeView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.treeView.customContextMenuRequested.connect(self.OnCustomContextMenu)
@@ -88,7 +94,7 @@ class GradingViewer(PluginViewer):
         # fill model with data
         self.PopulateModel(0)
         # finalize layout
-        layout = QtWidgets.QGridLayout()
+        layout = QtGui.QGridLayout()
         layout.addWidget(self.treeView)
 
 
@@ -101,7 +107,7 @@ class GradingViewer(PluginViewer):
         except:
             return False
 
-    @QtCore.pyqtSlot(QtCore.QModelIndex)
+    @QtCore.Slot(QtCore.QModelIndex)
     def ItemDoubleClickSlot(self, index):
         """
         TreeView DoubleClicked Slot.
@@ -118,19 +124,16 @@ class GradingViewer(PluginViewer):
             self.PopulateModel(instr)
 
 
-    @QtCore.pyqtSlot(QtCore.QPoint)
+    @QtCore.Slot(QtCore.QPoint)
     def OnCustomContextMenu(self, point):
-        menu = QtWidgets.QMenu()
+        menu = QtGui.QMenu()
 
         # Actions
-        action_set_t = QtWidgets.QAction('Set grade threshold...', self.treeView)
-        action_set_t.triggered.connect(self.SetThreshold)
-        action_restore = QtWidgets.QAction('Show All', self.treeView)
-        action_restore.triggered.connect(self.Restore)
-        action_export_trace = QtWidgets.QAction('Export this trace...', self.treeView)
-        action_export_trace.triggered.connect(self.SaveTrace)
-        action_close_viewer = QtWidgets.QAction('Close Viewer', self.treeView)
-        action_close_viewer.triggered.connect(lambda: self.Close(4))
+        action_set_t = QtGui.QAction('Set grade threshold...', self.treeView, triggered=lambda: self.SetThreshold())
+        action_restore = QtGui.QAction('Show All', self.treeView, triggered=lambda: self.Restore())
+        action_export_trace = QtGui.QAction('Export this trace...', self.treeView, triggered=lambda: self.SaveTrace())
+        action_close_viewer = QtGui.QAction('Close Viewer', self.treeView, triggered=lambda: self.Close(4))
+
         # add actions to menu
         menu.addAction(action_set_t)
         menu.addAction(action_restore)
@@ -140,18 +143,18 @@ class GradingViewer(PluginViewer):
 
         menu.exec_(self.treeView.viewport().mapToGlobal(point))
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def SetThreshold(self):
         threshold = AskLong(-1, 'There are a total of %s grades: %s. Specify a threshold which lines to display:' % (len(self.grades), ''.join('%s ' % c for c in self.grades)))
         if threshold in self.grades:
             self.PopulateModel(threshold)
 
 
-    @QtCore.pyqtSlot(str)
-    def SaveTrace(self):
+    @QtCore.Slot(str)
+    def SaveTrace(self):  #TODO
         if self.save is not None:
             self.save(self.trace)
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def Restore(self):
         self.PopulateModel(0)

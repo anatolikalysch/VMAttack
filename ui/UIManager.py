@@ -1,8 +1,25 @@
 # coding=utf-8
 __author__ = 'Anatoli Kalysch'
 
-from cute import QtGui, QtCore, QtWidgets, form_to_widget
+
 import idaapi
+
+# to mitigate the migration from PySide(IDA SDK <= 6.8) to PyQt5(IDA SDK >= 6.9) this class will handle UI viewer element imports
+
+from cute import QtGui, QtCore, QtWidgets, form_to_widget, use_qt5
+# import dependent version dependent UI elements
+if not use_qt5:
+    from legacyUI.ClusterViewer import ClusterViewer
+    from legacyUI.GradingViewer import GradingViewer
+    from legacyUI.OptimizationViewer import OptimizationViewer
+    from legacyUI.VMInputOutputViewer import VMInputOuputViewer
+    from legacyUI.StackChangeViewer import StackChangeViewer
+else:
+    from ClusterViewer import ClusterViewer
+    from GradingViewer import GradingViewer
+    from OptimizationViewer import OptimizationViewer
+    from VMInputOutputViewer import VMInputOuputViewer
+    from StackChangeViewer import StackChangeViewer
 
 
 class UIManager(object):
@@ -23,7 +40,7 @@ class UIManager(object):
         except:
             self.widget = form_to_widget('Output window')
         self.window = self.widget.window()
-        self.menu = self.window.findChild(QtGui.QMenuBar)
+        self.menu = self.window.findChild(QtWidgets.QMenuBar)
 
     # add top level menu
     def add_menu(self, name):
