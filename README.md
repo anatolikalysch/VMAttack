@@ -66,7 +66,7 @@ Following the address we see the virtual machine function which is basically an 
 A solution to this obfuscation would be the reversal of the interpreter and the interpretation of the byte code by the reverse engineer. Due to the time consuming nature of this task we will try to reverse the binary with our VMAttack plugin.
 
 VMAttacks static analysis functionality is enabled by default. The dynamic analysis capabilities however require an extra step. Since we want to use the static and dynamic capabilities for this demo, first we need to enable the dynamic functionality of VMAttack. This is done by either generating an instruction trace dynamically or loading an instruction trace from file. Trace generation is automatic and upon completion it will produce a success notification in **IDA**s _output window_. Traversed paths will be colored in a shade of blue, where a darker shade represents a higher number of traversals. Alternatively the loaded trace will only produce the success notification in **IDA**s _output window_.
-With the newly generated/loaded trace we now have dynamic an static capabilities enabled and can start the _grading system analysis_. Starting with the _grading analysis_ is usually a good fit, since it is automated and takes several analysis capabilities into account. This enables a **cumulative** result which can even tolerate analysis errors to some extent and still produce good results. At the end of the grading analysis the now graded trace will be presented in the **grading viewer**. The trace can now be filtered either by double clicking a grade or via context menu where the user will be prompted to input the grade threshold to display.
+With the newly generated/loaded trace we now have dynamic and static capabilities enabled and can start the _grading system analysis_. Starting with the _grading analysis_ is usually a good fit, since it is automated and takes several analysis capabilities into account. This enables a **cumulative** result which can even tolerate analysis errors to some extent and still produce good results. At the end of the grading analysis the now graded trace will be presented in the **grading viewer**. The trace can now be filtered either by double clicking a grade or via context menu where the user will be prompted to input the grade threshold to display.
 In the case of addvmp it will be enough to select the highest grade to be presented with the deobfuscated function (since the original function is quite simple in this case). In becomes obvious, that the two values passed over the stack are added together. Additionally, should the result be not satisfiable, the user can change the importance of an analysis function (**see settings**) or even disable them (by setting the importance to 0), to produce better results. Simply change the importance and re-run the grading analysis.
 
 ![alt text](screenshots/grading4.png "Grading Success")
@@ -331,3 +331,12 @@ The Settings provide the necessary interface to enable the user to change values
 
 **Extract function parameters**: Should function parameters be extracted during trace generation
 
+##Current Progress
+
+Current Version: 0.2
+
+
+This plugin already has a working state. Nevertheless there are several improvements (analysis capabilities of this plugin and software engineering optimizations) that will be implemented over time. The TODOs in the code give a rough estimate about those future improvements.
+
+**Current TODO**: improve usage of the static analysis in grading system
+**Next TODO**: enhance multithreading of analysis capabilities
