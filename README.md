@@ -339,4 +339,5 @@ Current Version: 0.2
 This plugin already has a working state. Nevertheless there are several improvements (analysis capabilities of this plugin and software engineering optimizations) that will be implemented over time. The TODOs in the code give a rough estimate about those future improvements.
 
 **Current TODO**: improve usage of the static analysis in grading system
+
 **Next TODO**: enhance multithreading of analysis capabilities
