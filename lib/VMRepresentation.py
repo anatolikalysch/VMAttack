@@ -29,6 +29,7 @@ class VMRepresentation(object):
             self._pa_ma = 2
             self._clu = 1
             self._mem_use = 3
+            self._static = 3
 
 
     scriptor = None
@@ -118,6 +119,10 @@ class VMRepresentation(object):
     def mem_use(self):
         return self.scriptor._mem_use
 
+    @property
+    def static(self):
+        return self.scriptor._static
+
     @in_out.setter
     def in_out(self, value):
         self.scriptor._in_out = value
@@ -133,6 +138,10 @@ class VMRepresentation(object):
     @mem_use.setter
     def mem_use(self, value):
         self.scriptor._mem_use = value
+
+    @static.setter
+    def static(self, value):
+        self.scriptor._static = value
 
     ### env ###
     @property

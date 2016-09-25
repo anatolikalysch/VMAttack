@@ -13,21 +13,23 @@ class SettingsView(Form):
                              "VMAttack Settings\n"
                              "\n"
                              "VM Values:\n"
-                             "<Byte code start        :{iCodeStart}>\n"
-                             "<Byte code end          :{iCodeEnd}>\n"
-                             "<Jump table base address:{iBaseAddr}>\n"
-                             "<VM function address    :{iVMAddr}>\n"
+                             "<Byte code start           :{iCodeStart}>\n"
+                             "<Byte code end             :{iCodeEnd}>\n"
+                             "<Jump table base address   :{iBaseAddr}>\n"
+                             "<VM function address       :{iVMAddr}>\n"
                              "\n"
                              "Clustering:\n"
                              "<Show basic blocks:{rShowBB}>\n"
                              "<Greedy clustering:{rGreedyCluster}>{cClusterValues}>\n"
-                             "<Cluster Heuristic      :{iClusterHeu}>\n"
+                             "<Cluster Heuristic         :{iClusterHeu}>\n"
                              "\n"
                              "Grading Automation:\n"
-                             "<Input/Output Importance:{iInOut}>\n"
-                             "<Clustering Importance  :{iClu}>\n"
-                             "<Pattern Importance     :{iPaMa}>\n"
-                             "<Memory Usage Importance:{iMeUs}>\n"
+                             "<Input/Output Importance   :{iInOut}>\n"
+                             "<Clustering Importance     :{iClu}>\n"
+                             "<Pattern Importance        :{iPaMa}>\n"
+                             "<Memory Usage Importance   :{iMeUs}>\n"
+                             "<Static Analysis Importance:{iSta}>\n"
+                             "\n"
                              "\n"
                              "Dynamic Analysis:\n"
                              "<Step Into System Libraries :{rStepInSysLibs}>\n"
@@ -40,6 +42,7 @@ class SettingsView(Form):
                           'iClu': Form.NumericInput(tp=Form.FT_DEC),
                           'iPaMa': Form.NumericInput(tp=Form.FT_DEC),
                           'iMeUs': Form.NumericInput(tp=Form.FT_DEC),
+                          'iSta': Form.NumericInput(tp=Form.FT_DEC),
                           'iVMAddr': Form.NumericInput(tp=Form.FT_DEC),
                           'iBaseAddr': Form.NumericInput(tp=Form.FT_DEC),
                           'iCodeEnd': Form.NumericInput(tp=Form.FT_DEC),
@@ -68,6 +71,7 @@ def Show():
     settings.iClu.value = vmr.clu
     settings.iPaMa.value = vmr.pa_ma
     settings.iMeUs.value = vmr.mem_use
+    settings.iSta.value = vmr.static
 
     settings.rStepInSysLibs.checked = vmr.sys_libs
     settings.rFuncParams.checked = vmr.extract_param
@@ -89,6 +93,7 @@ def Show():
         vmr.clu = settings.iClu.value
         vmr.pa_ma = settings.iPaMa.value
         vmr.mem_use = settings.iMeUs.value
+        vmr.static = settings.iSta.value
 
         # Env values
         vmr.sys_libs = settings.rStepInSysLibs.checked

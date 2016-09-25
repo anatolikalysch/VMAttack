@@ -444,12 +444,17 @@ def grading_automaton(visualization=0):
         w.pbar_update(5)
 
         ### STATIC OPTIMIZATION BASED ###
-        # Instruction types TODO
-        # IRmap = {'vpush':Traceline.is_push, 'vpop':'pop', 'vjmp':'jmp', 'vadd':'add', }
-        # get comments from bytecode
+        # TODO atm this is a little workaround to include the static analysis results
         try:
-            comments = set(v_inst.split(' ')[0] for v_inst in [Comment(ea) for ea in range(vmr.code_start, vmr.code_end)])
-            # TODO filter relevant instructions from PseudoInstructions and raise their grade in trace
+            comments = set(v_inst.split(' ')[0] for v_inst in [Comment(ea) for ea in range(vmr.code_start, vmr.code_end)] if v_inst is not None)
+            print comments
+            ins = [c.lstrip('v').split('_')[0] for c in comments]
+            print ins
+            for line in trace:
+                if line.disasm[0] in ins:
+                    line.raise_grade(vmr.static)
+                    print line.to_str_line()
+
         except:
             pass
         w.pbar_update(5)
