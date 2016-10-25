@@ -1,16 +1,17 @@
 #VMAttack **IDA** PRO Plugin
-**IDA Pro Plugin for static and dynamic virtualization-based packed analysis and deobfuscation**
+**IDA Pro Plugin for static and dynamic virtualization-based packed analysis and deobfuscation.**
 
+**VMAttack was awarded the _second place_ at the annual [IDA Pro Plug-in Contest in 2016](https://www.hex-rays.com/contests/2016/index.shtml)!**
 
 ##Introduction
 
-VMAttack is an **IDA PRO** Plugin which enables the reverse engineer to use additional analysis features designed to counter _virtualization-based obfuscation_. For now the focus is on **stack based virtual machines**, but will be broadened to support more architectures in the future. The plugin supports static and dynamic analysis capabilities which use **IDA API** features in conjunction with the plugins own analysis capabilities to provide automatic, semi-automatic and manual analysis functionality. 
+VMAttack is an **IDA PRO** Plug-in which enables the reverse engineer to use additional analysis features designed to counter _virtualization-based obfuscation_. For now the focus is on **stack based virtual machines**, but will be broadened to support more architectures in the future. The plugin supports static and dynamic analysis capabilities which use **IDA API** features in conjunction with the plugins own analysis capabilities to provide automatic, semi-automatic and manual analysis functionality. 
 The main goal of this plugin is to assist the reverse engineer in undoing the _virtualization-based obfuscation_ and to automate the reversing process where possible.
 
 ##Installation
 ###Prerequisites
 
-- IDA PRO >= 6.6
+- IDA Pro >= 6.6
 
 - Python 2.7.10/.11 
 
