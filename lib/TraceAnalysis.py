@@ -422,8 +422,7 @@ def dynamic_vm_values(trace, code_start=BADADDR, code_end=BADADDR, silent=False)
     # finalize code_start
     if not silent:
         if code_start not in code_addrs:
-            code_start = AskAddr(code_start, "Start of bytecode mismatch! Found %x but parameter for vm seem to be %s" % (
-                code_start, [hex(c) for c in code_addrs]))
+            code_start = AskAddr(code_start, "Start of bytecode mismatch! Found %x but parameter for vm seem to be %s" % (code_start, [hex(c) for c in code_addrs]))
 
     # code_end -> follow code_start until data becomes code again
     if code_end == BADADDR:
@@ -677,17 +676,34 @@ def follow_virt_reg(trace, **kwargs):
                     # 1. it was moved from mem, so it was on the stack -> append stack addres to be watched out for
                     if line.is_mov and line.is_op2_mem:
                         watch_addrs.add(''.join(c for c in line.disasm[2] if c not in '[]'))
-                        reg_vals.remove(val)
+                        #reg_vals.remove(val)
                     # 2. it was computed -> if regs played a role in the computation add them to values to watch out for
                     elif not line.is_mov:
-                        if line.is_op1_reg:
-                            reg_vals.add(line.disasm[1])
-                        if line.is_op1_mem:
-                            watch_addrs.add(''.join(c for c in line.disasm[1] if c not in '[]'))
-                        if line.is_op2_reg:  # not necessarily the case for lea
-                            reg_vals.add(line.disasm[2])
-                        if line.is_op2_mem:
-                            watch_addrs.add(''.join(c for c in line.disasm[2] if c not in '[]'))
+                        if line.disasm_len > 2:
+                            if line.is_op1_reg:
+                                reg_vals.add(line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
+                            if line.is_op1_mem:
+                                watch_addrs.add(''.join(c for c in line.disasm[1] if c not in '[]'))
+                            if line.is_op2_reg:  # not necessarily the case for lea
+                                reg_vals.add(line.ctx[get_reg(line.disasm[2], trace.ctx_reg_size)])
+                            if line.is_op2_mem:
+                                watch_addrs.add(''.join(c for c in line.disasm[2] if c not in '[]'))
+                        elif line.disasm_len == 2:
+                            if line.is_op1_reg:
+                                reg_vals.add(line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
+                                if line.ctx[get_reg('eax', trace.ctx_reg_size)] != prev.ctx[get_reg('eax', trace.ctx_reg_size)]:
+                                    reg_vals.add(line.ctx[get_reg('eax', trace.ctx_reg_size)])
+                                if line.disasm[0].startswith('not'):
+                                    reg_vals.add(line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
+                                    reg_vals.add(prev.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
+                                    backtrace.append(prev)
+                                    backtrace.append(trace[trace.index(line)-1])
+                                    try:
+                                        reg_vals.add(prev.ctx[get_reg(prev.disasm[1], trace.ctx_reg_size)])
+                                        reg_vals.add(trace[trace.index(line)-1].ctx[get_reg(prev.disasm[1], trace.ctx_reg_size)])
+                                    except:
+                                        pass
+
 
         except Exception, e:
             pass

@@ -59,7 +59,11 @@ class VMInputOuputViewer(PluginViewer):
 
                     node.appendRow([tid, addr, disasm, comment, context])
                 try:
-                    node.setBackground(self.brush_map[max(node_brush)])
+                    if len(node_brush) == 3:
+                        color = 3
+                    else:
+                        color = max(node_brush)
+                    node.setBackground(self.brush_map[color])
                 except:
                     pass
                 self.sim.appendRow(node)
