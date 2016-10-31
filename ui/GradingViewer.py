@@ -32,10 +32,19 @@ class GradingViewer(PluginViewer):
         w = NotifyProgress()
         ctr = 0
         max = len(self.trace)
-
+        prev = None
         for line in self.trace:
             assert isinstance(line, Traceline)
-            if line.grade >= threshold:
+
+            if prev is not None and threshold > 2:
+                if prev is not None:
+                    grade = QtGui.QStandardItem(' ')
+                    tid = QtGui.QStandardItem(' ')
+                    addr = QtGui.QStandardItem(' ')
+                    disasm = QtGui.QStandardItem('previous CPU context:')
+                    comment = QtGui.QStandardItem(' ')
+                    context = QtGui.QStandardItem(''.join('%s:%s ' % (c, prev.ctx[c]) for c in prev.ctx.keys() if prev.ctx is not None))
+                    self.sim.appendRow([grade, tid, addr, disasm, comment, context])
                 grade = QtGui.QStandardItem('%s' % line.grade)
                 tid = QtGui.QStandardItem('%s' % line.thread_id)
                 addr = QtGui.QStandardItem('%x' % line.addr)
@@ -47,6 +56,7 @@ class GradingViewer(PluginViewer):
 
             ctr += 1
             w.pbar_set(int(float(ctr) / float(max) * 100))
+            prev = line
         w.close()
 
         self.treeView.resizeColumnToContents(0)
