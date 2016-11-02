@@ -369,6 +369,23 @@ def optimization_stack_addr_propagation(trace):
 
                 except:
                     pass
+
+            elif line.disasm[2].__contains__('ptr') and line.disasm[2].endswith(']'):
+                start = line.disasm[2].find('[')
+                end = line.disasm[2].find(']')
+                try:
+                    # inst reg, ptr [mem]
+
+                    if get_reg_class(line.disasm[1]) is not None and not line.disasm[0].startswith('lea'):
+                        line.comment = '%s=%s' % (line.disasm[2][start:end], line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
+                    elif get_reg_class(line.disasm[1]) is not None and line.disasm[0].startswith('lea'):
+                        line.comment = '%s=%x' % (line.disasm[2][start:end], int(line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)], 16) -  # current register content minus
+                                                  int(prev_line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)], 16))  # previous register content
+
+                    else:
+                        line.comment = '%s=%s' % (line.disasm[2][start:end], pseudo_stack[line.disasm[2][start:end]])
+                except:
+                    pass
             elif not line.disasm[0].startswith('mov') and line.disasm[1].startswith('[') and line.disasm[1].endswith(']'):
                 try:
                     line.comment = '%s=%s' % (line.disasm[1], pseudo_stack[line.disasm[1]])
