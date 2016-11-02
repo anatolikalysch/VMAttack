@@ -66,7 +66,7 @@ class ClusterViewer(PluginViewer):
                     # subdivide the clusters by basic blocks
                     for line in cluster:
                         assert isinstance(line, Traceline)
-                        if is_basic_block_end(line.addr):
+                        if line.disasm[0].startswith('j'):
                             bb.append(line)
                             bbs.append(bb)
                             bb = []
@@ -99,8 +99,7 @@ class ClusterViewer(PluginViewer):
                         addr = QtGui.QStandardItem('%x' % l.addr)
                         disasm = QtGui.QStandardItem(l.disasm_str())
                         comment = QtGui.QStandardItem(''.join(c for c in l.comment if l.comment is not None))
-                        context = QtGui.QStandardItem(
-                            ''.join('%s:%s ' % (c, l.ctx[c]) for c in l.ctx if l.ctx is not None))
+                        context = QtGui.QStandardItem(''.join('%s:%s ' % (c, l.ctx[c]) for c in l.ctx if l.ctx is not None))
                         cluster_node.appendRow([tid, addr, disasm, comment, context])
 
         w.close()

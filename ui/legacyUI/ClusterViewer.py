@@ -64,7 +64,7 @@ class ClusterViewer(PluginViewer):
                     # subdivide the clusters by basic blocks
                     for line in cluster:
                         assert isinstance(line, Traceline)
-                        if is_basic_block_end(line.addr):
+                        if line.disasm[0].startswith('j'):
                             bb.append(line)
                             bbs.append(bb)
                             bb = []
