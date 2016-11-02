@@ -689,6 +689,7 @@ def follow_virt_reg(trace, **kwargs):
                             if line.is_op2_mem:
                                 watch_addrs.add(''.join(c for c in line.disasm[2] if c not in '[]'))
                         elif line.disasm_len == 2:
+                            reg_vals.add(prev.ctx[get_reg('eax', trace.ctx_reg_size)])
                             if line.is_op1_reg:
                                 reg_vals.add(line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
                                 reg_vals.add(prev.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])

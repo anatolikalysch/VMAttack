@@ -372,18 +372,17 @@ def optimization_stack_addr_propagation(trace):
 
             elif line.disasm[2].__contains__('ptr') and line.disasm[2].endswith(']'):
                 start = line.disasm[2].find('[')
-                end = line.disasm[2].find(']')
                 try:
                     # inst reg, ptr [mem]
 
                     if get_reg_class(line.disasm[1]) is not None and not line.disasm[0].startswith('lea'):
-                        line.comment = '%s=%s' % (line.disasm[2][start:end], line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
+                        line.comment = '%s=%s' % (line.disasm[2][start:], line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
                     elif get_reg_class(line.disasm[1]) is not None and line.disasm[0].startswith('lea'):
-                        line.comment = '%s=%x' % (line.disasm[2][start:end], int(line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)], 16) -  # current register content minus
+                        line.comment = '%s=%x' % (line.disasm[2][start:], int(line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)], 16) -  # current register content minus
                                                   int(prev_line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)], 16))  # previous register content
 
                     else:
-                        line.comment = '%s=%s' % (line.disasm[2][start:end], pseudo_stack[line.disasm[2][start:end]])
+                        line.comment = '%s=%s' % (line.disasm[2][start:], pseudo_stack[line.disasm[2][start:]])
                 except:
                     pass
             elif not line.disasm[0].startswith('mov') and line.disasm[1].startswith('[') and line.disasm[1].endswith(']'):
@@ -407,6 +406,18 @@ def optimization_stack_addr_propagation(trace):
                     pseudo_stack.pop(prev_line.ctx[get_reg('rsp', trace.ctx_reg_size)])
                 except KeyError:
                     pass
+            # inst mem
+            elif line.disasm[1].endswith(']'):
+                # case ptr additionally requires a start
+                if line.disasm[1].__contains__('ptr'):
+                    start = line.disasm[1].find('[')
+                else:
+                    start = 0
+                try:
+                    line.comment = '%s=%s' % (line.disasm[1][start:], pseudo_stack[line.disasm[1][start:]])
+                except:
+                    line.comment = '%s=?' % (line.disasm[1][start:])
+
         line.comment = line.comment.upper()
     trace.stack_addr_propagation = True
 
