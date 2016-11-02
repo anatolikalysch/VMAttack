@@ -691,8 +691,10 @@ def follow_virt_reg(trace, **kwargs):
                         elif line.disasm_len == 2:
                             if line.is_op1_reg:
                                 reg_vals.add(line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
+                                reg_vals.add(prev.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
                                 if line.ctx[get_reg('eax', trace.ctx_reg_size)] != prev.ctx[get_reg('eax', trace.ctx_reg_size)]:
                                     reg_vals.add(line.ctx[get_reg('eax', trace.ctx_reg_size)])
+                                    reg_vals.add(prev.ctx[get_reg('eax', trace.ctx_reg_size)])
                                 if line.disasm[0].startswith('not'):
                                     reg_vals.add(line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
                                     reg_vals.add(prev.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
@@ -734,6 +736,7 @@ def follow_virt_reg(trace, **kwargs):
         update.pbar_update(40)
     # reverse the reversed bt
     backtrace.reverse()
+    backtrace = [line for line in backtrace if line.disasm[1] not in ['esi', 'edi', 'ebp', 'rsi', 'rdi', 'rbp']]
     if manual:
         print
         for line in backtrace:
