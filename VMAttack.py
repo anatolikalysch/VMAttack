@@ -1,4 +1,5 @@
 # coding=utf-8
+from lib.Logging import get_log
 
 __author__ = 'Anatoli Kalysch'
 
@@ -286,6 +287,7 @@ class VMAttack(plugin_t):
             self.vma_mgr.extend_menu()
             #self.vma_mgr.welcome()
             msg('[*] Starting VMAttack plugin...\n')
+            get_log().log('[VMA] Starting VMAttack and initiating variables ...\n')
             return PLUGIN_KEEP
 
         except Exception, e:
@@ -308,6 +310,7 @@ class VMAttack(plugin_t):
 
     def term(self):
         if self.vma_mgr is not None:
+            get_log().finalize()
             self.vma_mgr.revert_menu()
             del_vmr()
             del self

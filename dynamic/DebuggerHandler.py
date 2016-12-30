@@ -1,5 +1,6 @@
 # coding=utf-8
 from dynamic.TraceRepresentation import Trace, Traceline
+from lib.Logging import get_log
 
 __author__ = 'Anatoli Kalysch'
 
@@ -27,6 +28,7 @@ class DebuggerHandler(object):
             self.dbg = IDADebugger()
 
         if dbg_get_name() is None:
+            get_log().log('[DBG] Debugger name was none so loaded default Windows32 debugger\n')
             LoadDebugger('Win32', 0)
 
 
@@ -49,6 +51,7 @@ class DebuggerHandler(object):
 
     def switch_debugger(self, func):
         if func is None:
+            get_log().log('[DBG] Instantiation function was empty so no debugger chosen\n')
             raise Exception('[*] empty function! Cannot instantiate Debugger!')
 
         self.load_dbg = types.MethodType(func, self)
@@ -106,6 +109,7 @@ def load():
             path = asktext(40, '', 'Please provide the full path to the trace file: ')
 
     if path is not None:
+        get_log().log('[TRC] Loaded the trace at %s\n' % path)
         if path.endswith('.txt'):
             with open(path, 'r') as f:
                 lines = f.readlines()
@@ -123,6 +127,7 @@ def load():
 
             # framework json trace
             if isinstance(lines, dict) or path.endswith('.json'):
+                get_log().log('[TRC] The trace seems to be a VMAttack trace\n')
                 for index in range(len(lines.keys())):
                     line = lines[str(index)]
                     t = Traceline(thread_id=line[0], addr=line[1], disasm=line[2], ctx=line[3], comment=line[4])

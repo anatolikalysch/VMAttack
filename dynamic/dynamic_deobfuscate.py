@@ -304,32 +304,37 @@ def grading_automaton(visualization=0):
     w.show()
 
     trace = prepare_trace()
+    orig_trace = deepcopy(trace)
     try:
         ### INIT THE TRACE GRADES ###
         trace = init_grading(deepcopy(trace))
-        w.pbar_update(10)
+        w.pbar_update(10) # 10%
 
         ### REGISTER USAGE BASED: this must be done before optimization
         reg_dict = defaultdict(lambda: 0)
 
         # find the register infrastructure and vm addressing scheme -> this tells us which registers are used for addressing and are not important for grading_automaton
-        for line in trace:
-            assert isinstance(line, Traceline)
-            if line.is_op2_reg and get_reg_class(line.disasm[2]) is not None:  # get reg class will only return != None for the 8-16 standard cpu regs
-                reg_dict[get_reg_class(line.disasm[2])] += 1
+        try:
+            for line in trace:
+                assert isinstance(line, Traceline)
+                if line.is_op2_reg and get_reg_class(line.disasm[2]) is not None:  # get reg class will only return != None for the 8-16 standard cpu regs
+                    reg_dict[get_reg_class(line.disasm[2])] += 1
 
-        # get the sorted list of regs highest occurence first
-        sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
-        length = len(sorted_keys)
-        w.pbar_update(10)
-        # classify the important and less important registers
-        if length % 2 == 0:
-            important_regs = set(reg[0] for reg in sorted_keys[:(length / 2)])
-            disregard_regs = set(reg[0] for reg in sorted_keys[(length / 2):])
-        else:
-            # if this is the case, one more register gets declared unimportant, since it is better to be more careful about raising grades
-            important_regs = set(reg[0] for reg in sorted_keys[:(length - 1) / 2])
-            disregard_regs = set(reg[0] for reg in sorted_keys[(length - 1) / 2:])
+            # get the sorted list of regs highest occurence first
+            sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
+            length = len(sorted_keys)
+            w.pbar_update(10) # 20%
+            # classify the important and less important registers
+            if length % 2 == 0:
+                important_regs = set(reg[0] for reg in sorted_keys[:(length / 2)])
+                disregard_regs = set(reg[0] for reg in sorted_keys[(length / 2):])
+            else:
+                # if this is the case, one more register gets declared unimportant, since it is better to be more careful about raising grades
+                important_regs = set(reg[0] for reg in sorted_keys[:(length - 1) / 2])
+                disregard_regs = set(reg[0] for reg in sorted_keys[(length - 1) / 2:])
+        except:
+            pass
+
 
         ### OPTIMIZE TRACE ###
         try:
@@ -337,7 +342,7 @@ def grading_automaton(visualization=0):
                 trace = optimization_const_propagation(trace)
         except:
             pass
-        w.pbar_update(10)
+        w.pbar_update(10) #30%
         try:
             if not trace.stack_addr_propagation:
                 trace = optimization_stack_addr_propagation(trace)
@@ -346,101 +351,114 @@ def grading_automaton(visualization=0):
 
         ### REGISTER USAGE AND INPUT OUTPUT BASED ###
         # raise the grade of line containing input and output values
-        values = find_input(deepcopy(trace)).union(find_output(deepcopy(trace)))
-        for line in trace:
-            for val in values:
-                if val in line.to_str_line():
-                    line.raise_grade(vmr.in_out)
+        try:
+            values = find_input(deepcopy(trace)).union(find_output(deepcopy(trace)))
+            for line in trace:
+                for val in values:
+                    if val in line.to_str_line():
+                        line.raise_grade(vmr.in_out)
 
-        w.pbar_update(10)
+            w.pbar_update(10) #40%
 
-        # backtrace regs and raise grade
-        virt_regs = find_virtual_regs(deepcopy(trace))
-        for key in virt_regs:
-            if get_reg_class(key) in important_regs:
-                for line in follow_virt_reg(deepcopy(trace), virt_reg_addr=virt_regs[key]):
-                    try:
-                        for other in trace:
-                            if line == other:
-                                other.raise_grade(vmr.in_out)
-                    except ValueError:
-                        print 'The line %s was not found in the trace, hence the grade could not be raised properly!' % line.to_str_line()
-            elif get_reg_class(key) in disregard_regs:
-                for line in follow_virt_reg(deepcopy(trace), virt_reg_addr=virt_regs[key]):
-                    try:
-                        for other in trace:
-                            if line == other:
-                                other.lower_grade(vmr.in_out)
-                    except ValueError:
-                        print 'The line %s was not found in the trace, hence the grade could not be lowered properly!' % line.to_str_line()
-        w.pbar_update(5)
+            # backtrace regs and raise grade
+            virt_regs = find_virtual_regs(deepcopy(trace))
+            for key in virt_regs:
+                if get_reg_class(key) in important_regs:
+                    for line in follow_virt_reg(deepcopy(trace), virt_reg_addr=virt_regs[key]):
+                        try:
+                            for other in trace:
+                                if line == other:
+                                    other.raise_grade(vmr.in_out)
+                        except ValueError:
+                            print 'The line %s was not found in the trace, hence the grade could not be raised properly!' % line.to_str_line()
+                elif get_reg_class(key) in disregard_regs:
+                    for line in follow_virt_reg(deepcopy(trace), virt_reg_addr=virt_regs[key]):
+                        try:
+                            for other in trace:
+                                if line == other:
+                                    other.lower_grade(vmr.in_out)
+                        except ValueError:
+                            print 'The line %s was not found in the trace, hence the grade could not be lowered properly!' % line.to_str_line()
+        except:
+            pass
+        w.pbar_update(5) #45%
 
         ### REGISTER USAGE FREQUENCY BASED ###
-        # lower the grades for the most commonly used registers
-        for line in trace:
-            assert isinstance(line, Traceline)
-            if line.is_op1_reg and get_reg_class(line.disasm[1]) is not None:  # get reg class will only return != None for the 8-16 standard cpu regs
-                reg_dict[get_reg_class(line.disasm[1])] += 1
+        try:
+            # lower the grades for the most commonly used registers
+            for line in trace:
+                assert isinstance(line, Traceline)
+                if line.is_op1_reg and get_reg_class(line.disasm[1]) is not None:  # get reg class will only return != None for the 8-16 standard cpu regs
+                    reg_dict[get_reg_class(line.disasm[1])] += 1
 
-        # get the sorted list of regs highest occurrence first
-        sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
-        length = len(sorted_keys)
-        w.pbar_update(5)
-        # classify the less important registers
-        if length % 2 == 0:
-            disregard_regs = set(reg[0] for reg in sorted_keys[:(length / 2)])
-        else:
-            disregard_regs = set(reg[0] for reg in sorted_keys[:(length - 1) / 2])
+            # get the sorted list of regs highest occurrence first
+            sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
+            length = len(sorted_keys)
+            w.pbar_update(5) #50%
+            # classify the less important registers
+            if length % 2 == 0:
+                disregard_regs = set(reg[0] for reg in sorted_keys[:(length / 2)])
+            else:
+                disregard_regs = set(reg[0] for reg in sorted_keys[:(length - 1) / 2])
 
 
-        for line in trace:
-            assert isinstance(line, Traceline)
-            if line.is_jmp or line.is_mov or line.is_pop or line.is_push or line.disasm[0].startswith('ret') or line.disasm[
-                0].startswith('inc') or line.disasm[0].startswith('lea'):
-                line.lower_grade(vmr.pa_ma)
-            elif len(line.disasm) > 1 and get_reg_class(line.disasm[1]) in disregard_regs:
-                line.lower_grade(vmr.pa_ma)
-        w.pbar_update(10)
+            for line in trace:
+                assert isinstance(line, Traceline)
+                if line.is_jmp or line.is_mov or line.is_pop or line.is_push or line.disasm[0].startswith('ret') or line.disasm[
+                    0].startswith('inc') or line.disasm[0].startswith('lea'):
+                    line.lower_grade(vmr.pa_ma)
+                elif len(line.disasm) > 1 and get_reg_class(line.disasm[1]) in disregard_regs:
+                    line.lower_grade(vmr.pa_ma)
+        except:
+            pass
+        w.pbar_update(10) #60%
 
         ### CLUSTERING BASED ###
-        # raise the grades of the unique lines after clustering
-        cluster_result = repetition_clustering(deepcopy(trace))
-        for line in cluster_result:
-            if isinstance(line, Traceline):
-                trace[trace.index(line)].raise_grade(vmr.clu)
-        w.pbar_update(10)
+        try:
+            # raise the grades of the unique lines after clustering
+            cluster_result = repetition_clustering(deepcopy(trace))
+            for line in cluster_result:
+                if isinstance(line, Traceline):
+                    trace[trace.index(line)].raise_grade(vmr.clu)
+        except:
+            pass
+        w.pbar_update(10) #70%
 
         ### PEEPHOLE GRADING ###
-        # peephole grading
-        for line in trace:
-            assert isinstance(line, Traceline)
-            if line.disasm[0] in ['pop', 'push', 'inc', 'dec', 'lea', 'test'] or line.disasm[0].startswith('c') or line.is_jmp or line.is_mov or line.disasm[0].startswith('r'):
-                line.lower_grade(vmr.pa_ma)
-            elif len(line.disasm) > 1 and get_reg_class(line.disasm[1]) > 4:
-                continue
-            else:
-                line.raise_grade(vmr.pa_ma)
-
-        w.pbar_update(10)
+        try:
+            # peephole grading
+            for line in trace:
+                assert isinstance(line, Traceline)
+                if line.disasm[0] in ['pop', 'push', 'inc', 'dec', 'lea', 'test'] or line.disasm[0].startswith('c') or line.is_jmp or line.is_mov or line.disasm[0].startswith('r'):
+                    line.lower_grade(vmr.pa_ma)
+                elif len(line.disasm) > 1 and get_reg_class(line.disasm[1]) > 4:
+                    continue
+                else:
+                    line.raise_grade(vmr.pa_ma)
+        except:
+            pass
+        w.pbar_update(10) #80%
 
         ### OPTIMIZATION BASED ###
-        opti_trace = optimize(deepcopy(trace))
-        w.pbar_update(10)
-        for line in opti_trace:
-            assert isinstance(line, Traceline)
-            try:  # trace is heavily changed after optimization, might not find the trace line in the pre_op_trace
-                trace[trace.index(line)].raise_grade(vmr.pa_ma)
-            except:
-                pass
-            # additionally raise grade for every line that uses the memory and is not a mov
-            if line.disasm_len == 3 and line.is_op1_mem and not line.is_mov:
-                try:
-                    trace[trace.index(line)].raise_grade(vmr.mem_use)
+        try:
+            opti_trace = optimize(deepcopy(trace))
+            w.pbar_update(10) #90%
+            for line in opti_trace:
+                assert isinstance(line, Traceline)
+                try:  # trace is heavily changed after optimization, might not find the trace line in the pre_op_trace
+                    trace[trace.index(line)].raise_grade(vmr.pa_ma)
                 except:
                     pass
-            else:
-                trace[trace.index(line)].lower_grade(vmr.pa_ma)
-
+                # additionally raise grade for every line that uses the memory and is not a mov
+                if line.disasm_len == 3 and line.is_op1_mem and not line.is_mov:
+                    try:
+                        trace[trace.index(line)].raise_grade(vmr.mem_use)
+                    except:
+                        pass
+                else:
+                    trace[trace.index(line)].lower_grade(vmr.pa_ma)
+        except:
+            pass
         w.pbar_update(5)
 
         ### STATIC OPTIMIZATION BASED ###
@@ -449,18 +467,39 @@ def grading_automaton(visualization=0):
             comments = set(v_inst.split(' ')[0] for v_inst in [Comment(ea) for ea in range(vmr.code_start, vmr.code_end)] if v_inst is not None)
             print comments
             ins = [c.lstrip('v').split('_')[0] for c in comments]
-            print ins
             for line in trace:
                 if line.disasm[0] in ins:
                     line.raise_grade(vmr.static)
-                    print line.to_str_line()
 
         except:
             pass
         w.pbar_update(5)
+
+        ### RECURSION ###
+        try:
+            recursion = 0
+            vm_func = find_vm_addr(orig_trace)
+            for line in orig_trace:
+                if line.disasm[0].startswith('call') and line.disasm[1].__contains__(vm_func):
+                    recursion = recursion + 1
+        except:
+            pass
         w.close()
 
         grades = set([line.grade for line in trace])
+        max_grade = max(grades)
+        # raise the trace lines grade containing calls to maximum grade
+        try:
+            # such nach call und vm_addr
+            for line in trace:
+                if line.disasm[0].startswith('call') and line.disasm[1].__contains__(vm_func):
+                    line.grade = max_grade
+                elif line.disasm[1].__contains__('ss:') or line.disasm[2].__contains('ss:'):
+                    line.grade = max_grade
+        except:
+            pass
+
+
         if visualization == 0:
             v = GradingViewer(trace, save=save)
             v.Show()

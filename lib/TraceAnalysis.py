@@ -619,6 +619,7 @@ def follow_virt_reg(trace, **kwargs):
     :param real_reg_name: reg string
     :return: trace consisting of relevant tracelines for the virtual register
     """
+    assert(isinstance(trace, Trace))
     update = kwargs.get('update', None)
     manual = kwargs.get('manual', False)
 
@@ -738,6 +739,11 @@ def follow_virt_reg(trace, **kwargs):
     # reverse the reversed bt
     backtrace.reverse()
     backtrace = [line for line in backtrace if line.disasm[1] not in ['esi', 'edi', 'ebp', 'rsi', 'rdi', 'rbp']]
+    # append the previous line of first line to be able to see the contextual difference
+    try:
+        backtrace.append(trace[trace.index(backtrace[0]) - 1])
+    except:
+        pass
     if manual:
         print
         for line in backtrace:

@@ -1,0 +1,67 @@
+Thread  	Address                 	Instruction                     	Result
+00000A44	.text:_foo              	Memory layout changed: 45 segments	Memory layout changed: 45 segments
+00000A44	                        	                                	ST0=FFFFFFFFFFFFFFFF ST1=FFFFFFFFFFFFFFFF ST2=FFFFFFFFFFFFFFFF ST3=FFFFFFFFFFFFFFFF ST4=FFFFFFFFFFFFFFFF ST5=FFFFFFFFFFFFFFFF ST6=FFFFFFFFFFFFFFFF ST7=FFFFFFFFFFFFFFFF CTRL=FFFF CS=001B DS=0023 ES=0023 FS=003B GS=0000 SS=0023 EAX=76D71142 EBX=7FFD6000 ECX=00000000 EDX=00401047 ESI=00000000 EDI=00000000 EBP=0022FF94 ESP=0022FF8C EFL=00000246 XMM0= XMM1= XMM2= XMM3= XMM4= XMM5= XMM6= XMM7= MXCSR=FFFFFFFF MM0= MM1= MM2= MM3= MM4= MM5= MM6= MM7=
+00000A44	.text:_foo              	push    ebp                     	ESP=0022FF88
+00000A44	.text:_foo+1            	mov     ebp, esp                	EBP=0022FF88
+00000A44	.text:_foo+3            	sub     esp, 28h                	ESP=0022FF60 ZF=0
+00000A44	.text:_foo+6            	mov     [esp+28h+Str], offset __data_end__; \"Hello Pointer\"
+00000A44	.text:_foo+D            	call    _puts                   	ESP=0022FF5C
+00000A44	.text:_puts             	jmp     ds:__imp__puts          	EAX=00000000 ECX=75E28E8A EDX=77336194 ESP=0022FF60 ZF=1
+00000A44	.text:_foo+12           	mov     [esp+28h+Str], 3
+00000A44	.text:_foo+19           	call    _fib                    	ESP=0022FF5C
+00000A44	.text:_fib              	push    ebp                     	ESP=0022FF58
+00000A44	.text:_fib+1            	mov     ebp, esp                	EBP=0022FF58
+00000A44	.text:_fib+3            	push    ebx                     	ESP=0022FF54
+00000A44	.text:_fib+4            	sub     esp, 14h                	ESP=0022FF40 PF=0 ZF=0
+00000A44	.text:_fib+7            	cmp     [ebp+arg_0], 1
+00000A44	.text:_fib+B            	jnz     short loc_401014
+00000A44	.text:_fib:loc_401014   	cmp     [ebp+arg_0], 2
+00000A44	.text:_fib+18           	jnz     short loc_401021
+00000A44	.text:_fib:loc_401021   	mov     eax, [ebp+arg_0]        	EAX=00000003
+00000A44	.text:_fib+24           	sub     eax, 1                  	EAX=00000002
+00000A44	.text:_fib+27           	mov     [esp+18h+var_18], eax
+00000A44	.text:_fib+2A           	call    _fib                    	ESP=0022FF3C
+00000A44	.text:_fib              	push    ebp                     	ESP=0022FF38
+00000A44	.text:_fib+1            	mov     ebp, esp                	EBP=0022FF38
+00000A44	.text:_fib+3            	push    ebx                     	ESP=0022FF34
+00000A44	.text:_fib+4            	sub     esp, 14h                	ESP=0022FF20
+00000A44	.text:_fib+7            	cmp     [ebp+arg_0], 1
+00000A44	.text:_fib+B            	jnz     short loc_401014
+00000A44	.text:_fib:loc_401014   	cmp     [ebp+arg_0], 2          	PF=1 ZF=1
+00000A44	.text:_fib+18           	jnz     short loc_401021
+00000A44	.text:_fib+1A           	mov     eax, 1                  	EAX=00000001
+00000A44	.text:_fib+1F           	jmp     short loc_401041
+00000A44	.text:_fib:loc_401041   	add     esp, 14h                	ESP=0022FF34 PF=0 ZF=0
+00000A44	.text:_fib+44           	pop     ebx                     	ESP=0022FF38
+00000A44	.text:_fib+45           	pop     ebp                     	EBP=0022FF58 ESP=0022FF3C
+00000A44	.text:_fib+46           	retn                            	ESP=0022FF40
+00000A44	.text:_fib+2F           	mov     ebx, eax                	EBX=00000001
+00000A44	.text:_fib+31           	mov     eax, [ebp+arg_0]        	EAX=00000003
+00000A44	.text:_fib+34           	sub     eax, 2                  	EAX=00000001
+00000A44	.text:_fib+37           	mov     [esp+18h+var_18], eax
+00000A44	.text:_fib+3A           	call    _fib                    	ESP=0022FF3C
+00000A44	.text:_fib              	push    ebp                     	ESP=0022FF38
+00000A44	.text:_fib+1            	mov     ebp, esp                	EBP=0022FF38
+00000A44	.text:_fib+3            	push    ebx                     	ESP=0022FF34
+00000A44	.text:_fib+4            	sub     esp, 14h                	ESP=0022FF20
+00000A44	.text:_fib+7            	cmp     [ebp+arg_0], 1          	PF=1 ZF=1
+00000A44	.text:_fib+B            	jnz     short loc_401014
+00000A44	.text:_fib+D            	mov     eax, 1
+00000A44	.text:_fib+12           	jmp     short loc_401041
+00000A44	.text:_fib:loc_401041   	add     esp, 14h                	ESP=0022FF34 PF=0 ZF=0
+00000A44	.text:_fib+44           	pop     ebx                     	ESP=0022FF38
+00000A44	.text:_fib+45           	pop     ebp                     	EBP=0022FF58 ESP=0022FF3C
+00000A44	.text:_fib+46           	retn                            	ESP=0022FF40
+00000A44	.text:_fib+3F           	add     eax, ebx                	EAX=00000002
+00000A44	.text:_fib:loc_401041   	add     esp, 14h                	ESP=0022FF54
+00000A44	.text:_fib+44           	pop     ebx                     	EBX=7FFD6000 ESP=0022FF58
+00000A44	.text:_fib+45           	pop     ebp                     	EBP=0022FF88 ESP=0022FF5C
+00000A44	.text:_fib+46           	retn                            	ESP=0022FF60
+00000A44	.text:_foo+1E           	mov     [ebp+var_C], eax
+00000A44	.text:_foo+21           	mov     eax, [ebp+var_C]
+00000A44	.text:_foo+24           	mov     [esp+28h+var_24], eax
+00000A44	.text:_foo+28           	mov     [esp+28h+Str], offset Format; \"erg = %i\\n\"
+00000A44	.text:_foo+2F           	call    _printf                 	ESP=0022FF5C
+00000A44	.text:_printf           	jmp     ds:__imp__printf        	EAX=00000008 ECX=75DCC620 ESP=0022FF60 PF=1 ZF=1
+00000A44	.text:_foo+34           	mov     [esp+28h+Str], 0; Code
+00000A44	.text:_foo+3B           	call    _exit                   	ESP=0022FF5C
