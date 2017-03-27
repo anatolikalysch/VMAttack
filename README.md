@@ -17,8 +17,6 @@ The main goal of this plugin is to assist the reverse engineer in undoing the _v
 
 - Tested with Windows 7 and Windows 10.
 
-
-
 ###Guided Install
 
 To install the plugin simply run the setup.py:
@@ -45,6 +43,10 @@ setx VMAttack X:full\path\to\plugin
 ```
 
 Last you should copy the `VMAttack_plugin_stub.py` into your **IDA PRO** Plugins directory. That's it, now you're good to go!
+
+###Possible Issues
+
+ - Unable to find vcvarsall.bat => you need to install 'Microsoft Visual C++ Compiler for Python 2.7'
 
 ##Quick start guide
 
