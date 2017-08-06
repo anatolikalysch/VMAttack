@@ -245,6 +245,7 @@ class VMAttack_Manager(object):
                 self.update_vmr()
                 deobfuscate(self._vmr.code_start, self._vmr.base_addr, self._vmr.code_end, self._vmr.vm_addr)
             except Exception, ex:
+                get_log().log('[AUT] Could not use static doubfuscation analysis due to the following error\n%s\n%s\n' % (e.message, ex.message))
                 msg("[*] Could not provide static deobfuscation analysis! The following errors occured:\n %s \n %s" % (
                 e.message, ex.message))
 

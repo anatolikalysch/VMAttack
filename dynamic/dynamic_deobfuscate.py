@@ -3,6 +3,7 @@
 __author__ = 'Anatoli Kalysch'
 
 from threading import Thread
+from multiprocessing import Pool
 
 from ui.UIManager import GradingViewer
 from ui.UIManager import OptimizationViewer

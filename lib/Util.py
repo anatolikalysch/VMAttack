@@ -1,4 +1,6 @@
 # coding=utf-8
+from threading import Thread
+
 __author__ = 'Anatoli Kalysch'
 
 import idaapi
@@ -6,6 +8,8 @@ import idaapi
 from idc import *
 from idautils import *
 from lib.Register import get_reg_class, get_reg_by_size
+from multiprocessing import cpu_count
+from Queue import Queue
 
 ### ARCHITECTURE AND REGISTER FUNCTIONALITY ###
 # IDA PRO execution context layouts 64
@@ -164,4 +168,38 @@ def interprete_math_expr(operands, expr):
         else:
             raise Exception('[*] Exception parsing math expression: Unknown Value \'%s\'!' % expr)
     return result
+
+
+############################
+### MULTITHREADING UTILS ###
+############################
+
+### CORE NUM is used for multithreading
+CORE_NUM = 1
+try:
+    CORE_NUM = cpu_count()
+except NotImplementedError:
+    # Althrough handled I am assuming that you wouldn't use a system where cpu_count() is not implemented for the sole reason that IDA probably wouldn't run on it
+    CORE_NUM = 4
+
+class StopObject(object):
+    def __init__(self):
+        self.identity = "StopObject"
+        self.purpose = "Stopping QueueWorkers"
+
+class QueueWorker(Thread):
+    def __init__(self, q, func, timeout=None):
+        super(QueueWorker, self).__init__()
+        assert isinstance(q, Queue)
+        self.queue = q
+        self.func = func
+        if timeout is not None and timeout > 0:
+            self.timeout = timeout
+        else:
+            self.timeout = 60
+
+    def run(self):
+        return self.func(self.queue)
+
+
 

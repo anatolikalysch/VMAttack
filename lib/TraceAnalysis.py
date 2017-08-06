@@ -2,15 +2,22 @@
 # __author__ = 'Anatoli Kalysch'
 #
 import operator
+from functools import partial
 from _collections import defaultdict
 from copy import deepcopy
+from multiprocessing import Pool
+
+import itertools
 
 from TraceOptimizations import *
 from dynamic.TraceRepresentation import Trace, Traceline
 from idaapi import *
 from idautils import *
 from idc import *
+from lib.Logging import get_log
 from lib.VMRepresentation import get_vmr, VMContext
+from lib.Util import CORE_NUM
+from Queue import Queue
 
 
 #############################################
@@ -73,16 +80,24 @@ def address_count(trace):
     """
     trace = [line.addr for line in trace]
     analysis_result = {}
-    for addr in trace:
-        # for heuristic analysis the count of address
-        count = trace.count(addr)
-        if addr not in analysis_result.keys():
-            analysis_result[addr] = count
+
+    pool = Pool(CORE_NUM)
+
+    packed = partial(address_count_helper, trace)
+
+    for elem in set(pool.map(packed, trace)):
+        analysis_result[elem[0]] = elem[1]
+
+    pool.terminate()
+    pool.join()
+
     # sort the analysis result by most common addresses
     sorted_result = sorted(analysis_result.items(), key=operator.itemgetter(1))
     sorted_result.reverse()
     return sorted_result
 
+def address_count_helper(addr_list, address):
+    return (address, addr_list.count(address))
 
 def repetition_cluster_round(cluster_list):
     """
@@ -96,7 +111,7 @@ def repetition_cluster_round(cluster_list):
     temp_cluster = [[cluster_list[cluster], cluster_list[cluster + 1]] for cluster in
                     range(0, len(cluster_list) - 1, 2)]
 
-    # each tupel is tested for validity
+    # each tupel is tested for validitygit create newgitgiigigasdf
     for cluster in temp_cluster:
         if cluster_list.count(cluster[0]) == cluster_list.count(cluster[1]):
             occurence = 0
@@ -231,7 +246,7 @@ def extract_stack_change(line, stack_changes):
 def create_cluster_gist(cluster, ctx_reg_size, prev_line_ctx, stack_changes):
     """
     Function takes a cluster, subdivides it into basic blocs (if any). For each bb a representative traceline is created which consists of relevant
-    instructions, relevant stack changes and shows the difference in the registers between fist ans last bb line.
+    instructions, relevant stack changes and shows the difference in the registers between first and last bb line.
     :param cluster: list of Tracelines
     :return: appeared stack_changes
     """
@@ -273,12 +288,16 @@ def repetition_clustering(trace, **kwargs):
     else:  # assuming greedy, since it produces best results im most cases
         pre = 1
         post = 0
+        runs = 0
         while pre != post:
             pre = len(clusters_final)
             clusters_final = repetition_cluster_round(clusters_final)
             post = len(clusters_final)
-
-
+            runs += 1
+    try:
+        get_log().log('[CLU] Clustering was executed %d times and the resulting cluster contained %s clusters\n' % (runs, len([a for a in clusters_final if not isinstance(a, Traceline)])))
+    except:
+        pass
     return clusters_final
 
 
@@ -339,6 +358,8 @@ def find_vm_addr(trace):
     for f in vm_funcs:
         vm_func_dict[f] = GetFunctionAttr(f, FUNCATTR_END) - GetFunctionAttr(f, FUNCATTR_START)
     if max(vm_func_dict, key=vm_func_dict.get) != vm_func:
+        get_log().log('[VMA] Found two possible addresses for the VM function start address: %s and %s\n' %
+                (vm_func, max(vm_func_dict, key=vm_func_dict.get)))
         return AskAddr(vm_func,
                 "Found two possible addresses for the VM function start address: %s and %s. Choose one!" %
                 (vm_func, max(vm_func_dict, key=vm_func_dict.get)))
@@ -422,6 +443,7 @@ def dynamic_vm_values(trace, code_start=BADADDR, code_end=BADADDR, silent=False)
     # finalize code_start
     if not silent:
         if code_start not in code_addrs:
+            get_log().log('Start of bytecode mismatch! Found %x but parameter for vm seem to be %s' % (code_start, [hex(c) for c in code_addrs]))
             code_start = AskAddr(code_start, "Start of bytecode mismatch! Found %x but parameter for vm seem to be %s" % (code_start, [hex(c) for c in code_addrs]))
 
     # code_end -> follow code_start until data becomes code again
@@ -475,6 +497,8 @@ def find_virtual_regs(trace, manual=False, update=None):
     vmr.vm_stack_reg_mapping = virt_regs
     if manual:
         print ''.join('%s:%s\n' % (c, virt_regs[c]) for c in virt_regs.keys())
+
+    get_log().log('[VMR] '.join('%s:%s\n' % (c, virt_regs[c]) for c in virt_regs.keys()) + '\n')
     return virt_regs
 
 
@@ -577,6 +601,8 @@ def find_input(trace, manual=False, update=None):
         update.pbar_update(10)
     if manual:
         print 'operands: %s' % ''.join('%s | ' % op for op in ops)
+
+    get_log().log('[OIV] %s\n' % ''.join('%s | ' % op for op in ops))
     return ops
 
 def find_output(trace, manual=False, update=None):
@@ -608,6 +634,8 @@ def find_output(trace, manual=False, update=None):
         update.pbar_update(40)
     if manual:
         print ''.join('%s:%s\n' % (c, ctx[c]) for c in ctx.keys() if get_reg_class(c) is not None)
+
+    get_log().log('[OOV] %s\n' % ''.join('%s:%s\n' % (c, ctx[c]) for c in ctx.keys() if get_reg_class(c) is not None))
     return set([ctx[get_reg(reg, trace.ctx_reg_size)].upper() for reg in ctx if get_reg_class(reg) is not None])
 
 
