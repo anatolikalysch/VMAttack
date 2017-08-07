@@ -96,8 +96,16 @@ def address_count(trace):
     sorted_result.reverse()
     return sorted_result
 
+
 def address_count_helper(addr_list, address):
+    """
+    Helper; used to enable multithreaded calls with several arguments.
+    @param addr_list: list of all the addresses
+    @param address: the address we are looking for
+    @return: tupel (address, occurence)
+    """
     return (address, addr_list.count(address))
+
 
 def repetition_cluster_round(cluster_list):
     """
@@ -188,7 +196,8 @@ def create_bb_diff(bb, ctx_reg_size, prev_line_ctx):
         for key in list(set(keys_l) - set(keys_f)):
             context[key] = last.ctx[key]
     else:  # means keys_l < keys_f and if that happens sth went wrong. Should not be possible by normal execution.
-        raise Exception('[*] Keys at the end of basic block %s-%s were LESS than at the beginning!' % (first.addr, last.addr))
+        raise Exception(
+            '[*] Keys at the end of basic block %s-%s were LESS than at the beginning!' % (first.addr, last.addr))
     last_ctx = prev_line_ctx
     for line in bb:
         if line.comment is not None:
@@ -221,6 +230,7 @@ def create_bb_diff(bb, ctx_reg_size, prev_line_ctx):
 
     result = Traceline(addr=last.addr, thread_id=last.thread_id, ctx=context, disasm=disasm, comment=comment)
     return result
+
 
 def extract_stack_change(line, stack_changes):
     """
@@ -295,7 +305,8 @@ def repetition_clustering(trace, **kwargs):
             post = len(clusters_final)
             runs += 1
     try:
-        get_log().log('[CLU] Clustering was executed %d times and the resulting cluster contained %s clusters\n' % (runs, len([a for a in clusters_final if not isinstance(a, Traceline)])))
+        get_log().log('[CLU] Clustering was executed %d times and the resulting cluster contained %s clusters\n' % (
+        runs, len([a for a in clusters_final if not isinstance(a, Traceline)])))
     except:
         pass
     return clusters_final
@@ -331,6 +342,7 @@ def cluster_removal(trace, **kwargs):
 
     return trace
 
+
 #####################################
 ### VM ANALYSIS FUNCTIONS         ###
 #####################################
@@ -359,10 +371,10 @@ def find_vm_addr(trace):
         vm_func_dict[f] = GetFunctionAttr(f, FUNCATTR_END) - GetFunctionAttr(f, FUNCATTR_START)
     if max(vm_func_dict, key=vm_func_dict.get) != vm_func:
         get_log().log('[VMA] Found two possible addresses for the VM function start address: %s and %s\n' %
-                (vm_func, max(vm_func_dict, key=vm_func_dict.get)))
+                      (vm_func, max(vm_func_dict, key=vm_func_dict.get)))
         return AskAddr(vm_func,
-                "Found two possible addresses for the VM function start address: %s and %s. Choose one!" %
-                (vm_func, max(vm_func_dict, key=vm_func_dict.get)))
+                       "Found two possible addresses for the VM function start address: %s and %s. Choose one!" %
+                       (vm_func, max(vm_func_dict, key=vm_func_dict.get)))
     else:
         return vm_func
 
@@ -409,7 +421,8 @@ def dynamic_vm_values(trace, code_start=BADADDR, code_end=BADADDR, silent=False)
 
     # try finding code_start
     if code_start == BADADDR:
-        code_start = GetFunctionAttr(vm_addr, FUNCATTR_END)#NextHead(GetFunctionAttr(vm_addr, FUNCATTR_END), vm_seg_end)
+        code_start = GetFunctionAttr(vm_addr,
+                                     FUNCATTR_END)  # NextHead(GetFunctionAttr(vm_addr, FUNCATTR_END), vm_seg_end)
         code_start = NextHead(code_start, BADADDR)
         while isCode(code_start):
             code_start = NextHead(code_start, BADADDR)
@@ -434,17 +447,20 @@ def dynamic_vm_values(trace, code_start=BADADDR, code_end=BADADDR, silent=False)
                         print e.message
 
     # finalize base_addr
-    max_addr = int(max(base_addr, key=base_addr.get), 16)  # now we have the base_addr used for offset computation - this will probably be the top of the table but to be sure we need to take its relative position into account
+    max_addr = int(max(base_addr, key=base_addr.get),
+                   16)  # now we have the base_addr used for offset computation - this will probably be the top of the table but to be sure we need to take its relative position into account
     base_addr = max_addr
     while GetMnem(PrevHead(base_addr)) == '':
         base_addr = PrevHead(base_addr)
 
-
     # finalize code_start
     if not silent:
         if code_start not in code_addrs:
-            get_log().log('Start of bytecode mismatch! Found %x but parameter for vm seem to be %s' % (code_start, [hex(c) for c in code_addrs]))
-            code_start = AskAddr(code_start, "Start of bytecode mismatch! Found %x but parameter for vm seem to be %s" % (code_start, [hex(c) for c in code_addrs]))
+            get_log().log('Start of bytecode mismatch! Found %x but parameter for vm seem to be %s' % (
+            code_start, [hex(c) for c in code_addrs]))
+            code_start = AskAddr(code_start,
+                                 "Start of bytecode mismatch! Found %x but parameter for vm seem to be %s" % (
+                                 code_start, [hex(c) for c in code_addrs]))
 
     # code_end -> follow code_start until data becomes code again
     if code_end == BADADDR:
@@ -534,7 +550,8 @@ def find_ops_callconv(trace, vmp_seg_start, vmp_seg_end):
                                 op1 = re.findall(r'.*\[(.*)\].*', line.disasm[1])[0]
                                 op2 = line.disasm[2]
                                 try:  # mov [xsp +/-/* reg/const], reg/const
-                                    expr = re.findall(r'.*([\+\-\*\/]).*', line.disasm[1])[0]  # find math expr + or - or * or /
+                                    expr = re.findall(r'.*([\+\-\*\/]).*', line.disasm[1])[
+                                        0]  # find math expr + or - or * or /
                                     elem = op1.split(expr)
 
                                     for e in elem:
@@ -572,7 +589,8 @@ def find_input(trace, manual=False, update=None):
     ops = set()
     if update is not None:
         update.pbar_update(20)
-    ex_trace, vmp_seg_start, vmp_seg_end = extract_vm_segment(deepcopy(trace))  # use deepcopy trace, since we need the full one  for find_ops_callconv
+    ex_trace, vmp_seg_start, vmp_seg_end = extract_vm_segment(
+        deepcopy(trace))  # use deepcopy trace, since we need the full one  for find_ops_callconv
     if update is not None:
         update.pbar_update(20)
     for line in ex_trace:
@@ -604,6 +622,7 @@ def find_input(trace, manual=False, update=None):
 
     get_log().log('[OIV] %s\n' % ''.join('%s | ' % op for op in ops))
     return ops
+
 
 def find_output(trace, manual=False, update=None):
     """
@@ -647,7 +666,7 @@ def follow_virt_reg(trace, **kwargs):
     :param real_reg_name: reg string
     :return: trace consisting of relevant tracelines for the virtual register
     """
-    assert(isinstance(trace, Trace))
+    assert (isinstance(trace, Trace))
     update = kwargs.get('update', None)
     manual = kwargs.get('manual', False)
 
@@ -688,16 +707,15 @@ def follow_virt_reg(trace, **kwargs):
                 reg_vals.add(line.ctx[reg])
                 break
 
-
     watch_addrs.add(virt_reg_addr)
 
     for line in trace:
-        assert isinstance(line,Traceline)
+        assert isinstance(line, Traceline)
         if line.is_jmp:
             continue
         try:
             # +1 because trace is reversed to get to prev element
-            prev = trace[trace.index(line)+1]
+            prev = trace[trace.index(line) + 1]
             for val in reg_vals.copy():
                 if val in line.ctx.values() and val not in prev.ctx.values():
                     backtrace.append(line)
@@ -705,7 +723,7 @@ def follow_virt_reg(trace, **kwargs):
                     # 1. it was moved from mem, so it was on the stack -> append stack addres to be watched out for
                     if line.is_mov and line.is_op2_mem:
                         watch_addrs.add(''.join(c for c in line.disasm[2] if c not in '[]'))
-                        #reg_vals.remove(val)
+                        # reg_vals.remove(val)
                     # 2. it was computed -> if regs played a role in the computation add them to values to watch out for
                     elif not line.is_mov:
                         if line.disasm_len > 2:
@@ -722,24 +740,26 @@ def follow_virt_reg(trace, **kwargs):
                             if line.is_op1_reg:
                                 reg_vals.add(line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
                                 reg_vals.add(prev.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
-                                if line.ctx[get_reg('eax', trace.ctx_reg_size)] != prev.ctx[get_reg('eax', trace.ctx_reg_size)]:
+                                if line.ctx[get_reg('eax', trace.ctx_reg_size)] != prev.ctx[
+                                    get_reg('eax', trace.ctx_reg_size)]:
                                     reg_vals.add(line.ctx[get_reg('eax', trace.ctx_reg_size)])
                                     reg_vals.add(prev.ctx[get_reg('eax', trace.ctx_reg_size)])
                                 if line.disasm[0].startswith('not'):
                                     reg_vals.add(line.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
                                     reg_vals.add(prev.ctx[get_reg(line.disasm[1], trace.ctx_reg_size)])
                                     backtrace.append(prev)
-                                    backtrace.append(trace[trace.index(line)-1])
+                                    backtrace.append(trace[trace.index(line) - 1])
                                     try:
                                         reg_vals.add(prev.ctx[get_reg(prev.disasm[1], trace.ctx_reg_size)])
-                                        reg_vals.add(trace[trace.index(line)-1].ctx[get_reg(prev.disasm[1], trace.ctx_reg_size)])
+                                        reg_vals.add(trace[trace.index(line) - 1].ctx[
+                                                         get_reg(prev.disasm[1], trace.ctx_reg_size)])
                                     except:
                                         pass
 
 
         except Exception, e:
             pass
-            #print 'reg_vals\n',line, e.message
+            # print 'reg_vals\n',line, e.message
         if watch_addrs:
             for addr in watch_addrs.copy():
                 try:
@@ -749,17 +769,17 @@ def follow_virt_reg(trace, **kwargs):
                         reg_vals.add(line.disasm[2])
                         r = line.ctx.keys()[line.ctx.values().index(line.disasm[2])]
                         for i in range(len(trace)):
-                            temp = trace[trace.index(line)+i]
+                            temp = trace[trace.index(line) + i]
                             if len(temp.disasm) == 3:
                                 if temp.disasm[1][-2:] == r[-2:]:
                                     if get_reg_class(r[-2:]) is not None:
-                                            watch_addrs.add(temp.disasm[2][1:-1])
-                                            break
+                                        watch_addrs.add(temp.disasm[2][1:-1])
+                                        break
 
                         if line.is_mov:
                             watch_addrs.remove(addr)
                 except Exception, e:
-                    #print 'watch_addr\n',line, e.message
+                    # print 'watch_addr\n',line, e.message
                     pass
 
     if update is not None:
