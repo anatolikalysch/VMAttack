@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 # coding=utf-8
 __author__ = 'Anatoli Kalysch'
 
@@ -10,27 +11,30 @@ from shutil import copyfile
 def do(action, dependency):
     return pip.main([action, dependency])
 
+
 def usage():
-    print "Usage: python setup.py <install | uninstall>"
+    print "Usage: python2 setup.py <install | uninstall>"
 
 
 dependencies = ["distorm3", 'idacute']
 
-
 if __name__ == '__main__':
-    print '[*] Starting dependency handling!'
+
     stub_name = 'VMAttack_plugin_stub.py'
     for dependency in dependencies:
         try:
-            if sys.argv[1] in ["install", "uninstall"]:
-                retval = do(sys.argv[1], dependency)
+            if sys.argv[1]:
+                print '[*] Starting dependency handling!'
+                if sys.argv[1] in ["install", "uninstall"]:
+                    retval = do(sys.argv[1], dependency)
+                else:
+                    retval = do("install", dependency)
+                if retval == 0:
+                    continue
+                else:
+                    print '[!] An error occured! Please resolve issues with dependencies and try again.'
             else:
-                retval = do("install", dependency)
-            if retval == 0:
-                continue
-            else:
-                print '[!] An error occured! Please resolve issues with dependencies and try again.'
-
+                raise IndexError()
         except IndexError:
             usage()
             sys.exit(1)
@@ -55,8 +59,5 @@ if __name__ == '__main__':
         ida_dir += r'\\'
     with open('install_dir', 'w') as f:
         f.write(ida_dir)
-    copyfile(stub_name, ida_dir+stub_name)
+    copyfile(stub_name, ida_dir + stub_name)
     print '[*] Install complete. All Done!'
-
-
-
