@@ -1,6 +1,8 @@
 # coding=utf-8
 from collections import defaultdict
 
+import re
+
 __author__ = 'Anatoli Kalysch'
 
 from dynamic.TraceRepresentation import Trace, Traceline

@@ -43,6 +43,13 @@ def visualize_cli(cluster):
 # #######################################
 # ### CLUSTERING AND RELATED FUNC     ###
 # #######################################
+def len_check_helper(line):
+    if isinstance(line, Traceline):
+        return 1
+    elif isinstance(line, list):
+        return len(line)
+
+
 def len_check(cluster):
     """
     length check for a clustered trace of trace lines
@@ -60,12 +67,6 @@ def len_check(cluster):
     pool.join()
     return l
 
-def len_check_helper(line):
-    if isinstance(line, Traceline):
-        return 1
-    elif isinstance(line, list):
-        return len(line)
-
 
 def get_addr(op):
     """
@@ -79,6 +80,16 @@ def get_addr(op):
     elif isinstance(op, list):
         # recursive in case list of lists
         return [get_addr(elem) for elem in op]
+
+
+def address_count_helper(addr_list, address):
+    """
+    Helper; used to enable multithreaded calls with several arguments.
+    @param addr_list: list of all the addresses
+    @param address: the address we are looking for
+    @return: tupel (address, occurence)
+    """
+    return (address, addr_list.count(address))
 
 
 def address_count(trace):
@@ -106,16 +117,62 @@ def address_count(trace):
     return sorted_result
 
 
-def address_count_helper(addr_list, address):
-    """
-    Helper; used to enable multithreaded calls with several arguments.
-    @param addr_list: list of all the addresses
-    @param address: the address we are looking for
-    @return: tupel (address, occurence)
-    """
-    return (address, addr_list.count(address))
+def repetition_cluster_round_helper(cluster_magic, cluster_list, cluster):
+    if cluster_list.count(cluster[0]) == cluster_list.count(cluster[1]):
+        occurence = 0
+        pop_indexes = []
+        try:
+            for j in xrange(len(cluster_list) - 1):
+                # if they are adjacent, they are labeled valid
+                if get_addr(cluster_list[j]) == get_addr(cluster[0]) and get_addr(cluster_list[j + 1]) == get_addr(
+                        cluster[1]):
+                    pop_indexes.append(j + 1)
+                    occurence += 1
+            if occurence > cluster_magic:  # if validity occured more than once we have a new cluster
+                return pop_indexes
+            else:
+                return None
+        except Exception, e:
+            print e.message
+            pass
 
-# TODO: parallelize if possible
+
+def clean_cluster_list_helper(cluster_list_part):
+    for cluster in cluster_list_part:
+        if isinstance(cluster, list):  # [Traceline, Traceline, ...]
+            for j in cluster:
+                if j.addr == BADADDR:
+                    cluster.remove(j)
+        elif not cluster or cluster.addr is BADADDR:
+            cluster_list_part.remove(cluster)
+
+    return cluster_list_part
+
+
+def clean_cluster_list(cluster_list):
+    pool = Pool(CORE_NUM)
+
+    split_step = (len(cluster_list) / CORE_NUM)
+
+    # split the cluster list
+    cluster_list_parts = []
+    for i in xrange(0, len(cluster_list), split_step):
+        try:
+            cluster_list_parts.append([cluster_list[i:i + split_step]])
+        except:
+            cluster_list_parts.append([cluster_list[i:]])
+
+    cluster_list_parts = pool.map(clean_cluster_list_helper, cluster_list_parts)
+
+    cluster_list = []
+    for part in cluster_list_parts:
+        cluster_list.extend(part)
+
+    pool.terminate()
+    pool.join()
+    return cluster_list
+
+
 def repetition_cluster_round(cluster_list):
     """
     One round of repetition cluster analysis.
@@ -127,17 +184,20 @@ def repetition_cluster_round(cluster_list):
     assert isinstance(cluster_list, list)
     test_length = len_check(cluster_list)
     temp_clusters = [[cluster_list[cluster], cluster_list[cluster + 1]] for cluster in
-                    xrange(0, len(cluster_list) - 1, 2)]
+                     xrange(0, len(cluster_list) - 1, 2)]
 
     try:
         pool = Pool(CORE_NUM)
         packed = partial(repetition_cluster_round_helper, vmr.cluster_magic, cluster_list)
 
         result = pool.map(packed, temp_clusters)
+        pool.terminate()
+        pool.join()
         # clean pop_indexes to a index value list
-        pop_indexes = []
-        for elem in result:
-            pop_indexes.extend(elem)
+        pop_indexes = list(itertools.chain.from_iterable(filter(None, result)))
+        # for elem in result:
+        #     if elem is not None:
+        #         pop_indexes.extend(elem)
 
         # sort it
         pop_indexes.sort()
@@ -162,39 +222,38 @@ def repetition_cluster_round(cluster_list):
         print e.message
         pass
 
-
-    # each tupel is tested for validity
-    for cluster in temp_clusters:
-        if cluster_list.count(cluster[0]) == cluster_list.count(cluster[1]):
-            occurence = 0
-            pop_indexes = []
-            try:
-                for j in xrange(len(cluster_list) - 1):
-                    # if they are adjacent, they are labeled valid
-                    if get_addr(cluster_list[j]) == get_addr(cluster[0]) and get_addr(cluster_list[j + 1]) == get_addr(
-                            cluster[1]):
-                        pop_indexes.append(j + 1)
-                        occurence += 1
-                if occurence > vmr.cluster_magic:  # if validity occured more than once we have a new cluster
-                    pop_ctr = 0
-                    for ind in pop_indexes:
-                        addition = cluster_list.pop(ind - pop_ctr)
-                        pop_ctr += 1
-                        base = cluster_list[ind - pop_ctr]
-
-                        if isinstance(base, Traceline):
-                            if isinstance(addition, Traceline):
-                                cluster_list[ind - pop_ctr] = [base, addition]
-                            elif isinstance(addition, list):
-                                cluster_list[ind - pop_ctr] = [base] + addition
-                        elif isinstance(base, list):
-                            if isinstance(addition, Traceline):
-                                cluster_list[ind - pop_ctr].append(addition)
-                            elif isinstance(addition, list):
-                                cluster_list[ind - pop_ctr].extend(addition)
-            except Exception, e:
-                print e.message
-                pass
+    # each tupel is tested for validity - old single threaded code
+    # for cluster in temp_clusters:
+    #     if cluster_list.count(cluster[0]) == cluster_list.count(cluster[1]):
+    #         occurence = 0
+    #         pop_indexes = []
+    #         try:
+    #             for j in xrange(len(cluster_list) - 1):
+    #                 # if they are adjacent, they are labeled valid
+    #                 if get_addr(cluster_list[j]) == get_addr(cluster[0]) and get_addr(cluster_list[j + 1]) == get_addr(
+    #                         cluster[1]):
+    #                     pop_indexes.append(j + 1)
+    #                     occurence += 1
+    #             if occurence > vmr.cluster_magic:  # if validity occured more than once we have a new cluster
+    #                 pop_ctr = 0
+    #                 for ind in pop_indexes:
+    #                     addition = cluster_list.pop(ind - pop_ctr)
+    #                     pop_ctr += 1
+    #                     base = cluster_list[ind - pop_ctr]
+    #
+    #                     if isinstance(base, Traceline):
+    #                         if isinstance(addition, Traceline):
+    #                             cluster_list[ind - pop_ctr] = [base, addition]
+    #                         elif isinstance(addition, list):
+    #                             cluster_list[ind - pop_ctr] = [base] + addition
+    #                     elif isinstance(base, list):
+    #                         if isinstance(addition, Traceline):
+    #                             cluster_list[ind - pop_ctr].append(addition)
+    #                         elif isinstance(addition, list):
+    #                             cluster_list[ind - pop_ctr].extend(addition)
+    #         except Exception, e:
+    #             print e.message
+    #             pass
 
     # clean up clusterlist
     cluster_list = clean_cluster_list(cluster_list)
@@ -204,73 +263,6 @@ def repetition_cluster_round(cluster_list):
     return cluster_list
 
 
-def repetition_cluster_round_helper(cluster_magic, cluster_list, cluster):
-    if cluster_list.count(cluster[0]) == cluster_list.count(cluster[1]):
-        occurence = 0
-        pop_indexes = []
-        try:
-            for j in xrange(len(cluster_list) - 1):
-                # if they are adjacent, they are labeled valid
-                if get_addr(cluster_list[j]) == get_addr(cluster[0]) and get_addr(cluster_list[j + 1]) == get_addr(
-                        cluster[1]):
-                    pop_indexes.append(j + 1)
-                    occurence += 1
-            if occurence > cluster_magic:  # if validity occured more than once we have a new cluster
-                pop_ctr = 0
-                for ind in pop_indexes:
-                    addition = cluster_list.pop(ind - pop_ctr)
-                    pop_ctr += 1
-                    base = cluster_list[ind - pop_ctr]
-
-                    if isinstance(base, Traceline):
-                        if isinstance(addition, Traceline):
-                            cluster_list[ind - pop_ctr] = [base, addition]
-                        elif isinstance(addition, list):
-                            cluster_list[ind - pop_ctr] = [base] + addition
-                    elif isinstance(base, list):
-                        if isinstance(addition, Traceline):
-                            cluster_list[ind - pop_ctr].append(addition)
-                        elif isinstance(addition, list):
-                            cluster_list[ind - pop_ctr].extend(addition)
-        except Exception, e:
-            print e.message
-            pass
-
-def clean_cluster_list(cluster_list):
-    pool = Pool(CORE_NUM)
-
-    split_step = (len(cluster_list) / CORE_NUM)
-
-    #split the cluster list
-    cluster_list_parts = []
-    for i in xrange(0, len(cluster_list), split_step):
-        try:
-            cluster_list_parts.append([cluster_list[i:i + split_step]])
-        except:
-            cluster_list_parts.append([cluster_list[i:]])
-
-    cluster_list_parts = pool.map(clean_cluster_list_helper, cluster_list_parts)
-
-    cluster_list = []
-    for part in cluster_list_parts:
-        cluster_list.extend(part)
-
-    pool.terminate()
-    pool.join()
-    return cluster_list
-
-def clean_cluster_list_helper(cluster_list_part):
-    for cluster in cluster_list_part:
-        if isinstance(cluster, list):  # [Traceline, Traceline, ...]
-            for j in cluster:
-                if j.addr == BADADDR:
-                    cluster.remove(j)
-        elif not cluster or cluster.addr is BADADDR:
-            cluster_list_part.remove(cluster)
-
-    return cluster_list_part
-
-# TODO: parallelize if possible
 def create_bb_diff(bb, ctx_reg_size, prev_line_ctx):
     """
     Addr and thread id irrelevant; ctx shown as: before -> after; disasm (and comment) is chosen by heuristic.
@@ -414,7 +406,7 @@ def repetition_clustering(trace, **kwargs):
             runs += 1
     try:
         get_log().log('[CLU] Clustering was executed %d times and the resulting cluster contained %s clusters\n' % (
-        runs, len([a for a in clusters_final if not isinstance(a, Traceline)])))
+            runs, len([a for a in clusters_final if not isinstance(a, Traceline)])))
     except:
         pass
     return clusters_final
@@ -513,6 +505,7 @@ def extract_vm_segment(trace):
         vm_seg_end = SegEnd(vm_addr)
     return [line for line in trace if vm_seg_start < line.addr and vm_seg_end > line.addr], vm_seg_start, vm_seg_end
 
+
 # TODO: parallelize if possible
 def dynamic_vm_values(trace, code_start=BADADDR, code_end=BADADDR, silent=False):
     """
@@ -568,10 +561,10 @@ def dynamic_vm_values(trace, code_start=BADADDR, code_end=BADADDR, silent=False)
     if not silent:
         if code_start not in code_addrs:
             get_log().log('Start of bytecode mismatch! Found %x but parameter for vm seem to be %s' % (
-            code_start, [hex(c) for c in code_addrs]))
+                code_start, [hex(c) for c in code_addrs]))
             code_start = AskAddr(code_start,
                                  "Start of bytecode mismatch! Found %x but parameter for vm seem to be %s" % (
-                                 code_start, [hex(c) for c in code_addrs]))
+                                     code_start, [hex(c) for c in code_addrs]))
 
     # code_end -> follow code_start until data becomes code again
     if code_end == BADADDR:
@@ -589,6 +582,7 @@ def dynamic_vm_values(trace, code_start=BADADDR, code_end=BADADDR, silent=False)
     print code_start, code_end, base_addr, vm_addr
 
     return vm_ctx
+
 
 # TODO: parallelize if possible
 def find_virtual_regs(trace, manual=False, update=None):
@@ -627,6 +621,7 @@ def find_virtual_regs(trace, manual=False, update=None):
 
     get_log().log('[VMR] '.join('%s:%s\n' % (c, virt_regs[c]) for c in virt_regs.keys()) + '\n')
     return virt_regs
+
 
 # TODO: parallelize if possible
 def find_ops_callconv(trace, vmp_seg_start, vmp_seg_end):
@@ -685,6 +680,7 @@ def find_ops_callconv(trace, vmp_seg_start, vmp_seg_end):
 
     return ops
 
+
 # TODO: parallelize if possible
 def find_input(trace, manual=False, update=None):
     """
@@ -734,6 +730,7 @@ def find_input(trace, manual=False, update=None):
     get_log().log('[OIV] %s\n' % ''.join('%s | ' % op for op in ops))
     return ops
 
+
 # TODO: parallelize if possible
 def find_output(trace, manual=False, update=None):
     """
@@ -767,6 +764,7 @@ def find_output(trace, manual=False, update=None):
 
     get_log().log('[OOV] %s\n' % ''.join('%s:%s\n' % (c, ctx[c]) for c in ctx.keys() if get_reg_class(c) is not None))
     return set([ctx[get_reg(reg, trace.ctx_reg_size)].upper() for reg in ctx if get_reg_class(reg) is not None])
+
 
 # TODO: parallelize if possible
 def follow_virt_reg(trace, **kwargs):

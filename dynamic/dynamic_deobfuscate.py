@@ -160,6 +160,13 @@ def manual_analysis(choice):
     w.close()
 
 
+def input_output_analysis_helper(vr, trace, key):
+    if get_reg_class(key) is None:
+        return (None, None)
+    else:
+        return (key, follow_virt_reg(deepcopy(trace), virt_reg_addr=vr[key], real_reg_name=key))
+
+
 def input_output_analysis(manual=False):
     """
     Input / Output analysis wrapper which computes the components of the output values of the VM function and allows for comparing these with the input arguments to the VM function.
@@ -223,13 +230,6 @@ def input_output_analysis(manual=False):
             v.Show()
     except:
         w.close()
-
-
-def input_output_analysis_helper(vr, trace, key):
-    if get_reg_class(key) is None:
-        return (None, None)
-    else:
-        return (key, follow_virt_reg(deepcopy(trace), virt_reg_addr=vr[key], real_reg_name=key))
 
 
 def clustering_analysis(visualization=0, grade=False, trace=None):
@@ -306,7 +306,7 @@ def dynamic_vmctx(manual=False):
     vmr.vm_ctx = vm_ctx
     if manual:
         print 'Code Start: %x; Code End: %x; Base Addr: %x; VM Addr: %x' % (
-        vm_ctx.code_start, vm_ctx.code_end, vm_ctx.base_addr, vm_ctx.vm_addr)
+            vm_ctx.code_start, vm_ctx.code_end, vm_ctx.base_addr, vm_ctx.vm_addr)
 
 
 def init_grading(trace):
@@ -357,7 +357,8 @@ def grading_automaton(visualization=0):
         try:
             for line in trace:
                 assert isinstance(line, Traceline)
-                if line.is_op2_reg and get_reg_class(line.disasm[2]) is not None:  # get reg class will only return != None for the 8-16 standard cpu regs
+                if line.is_op2_reg and get_reg_class(line.disasm[
+                                                         2]) is not None:  # get reg class will only return != None for the 8-16 standard cpu regs
                     reg_dict[get_reg_class(line.disasm[2])] += 1
 
             # get the sorted list of regs highest occurence first
@@ -549,7 +550,7 @@ def grading_automaton(visualization=0):
             v.Show()
         else:
             threshold = AskLong(1, 'There are a total of %s grades: %s. Specify a threshold which lines to display:' % (
-            len(grades), ''.join('%s ' % c for c in grades)))
+                len(grades), ''.join('%s ' % c for c in grades)))
             if threshold > -1:
                 for line in trace:
                     if line.grade >= threshold:
