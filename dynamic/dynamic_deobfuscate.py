@@ -23,10 +23,12 @@ def load_idadbg(self):
     from IDADebugger import IDADebugger
     return IDADebugger()
 
+
 # OllyDbg
 def load_olly(self):
     from OllyDebugger import OllyDebugger
     return OllyDebugger()
+
 
 # Bochs Dbg
 def load_bochsdbg(self):
@@ -34,11 +36,13 @@ def load_bochsdbg(self):
     LoadDebugger('Bochs', 0)
     return IDADebugger()
 
+
 # Win32 Dbg
 def load_win32dbg(self):
     from IDADebugger import IDADebugger
     LoadDebugger('win32', 0)
     return IDADebugger()
+
 
 # Immunity Dbg
 def load_immunitydbg(self):
@@ -58,13 +62,16 @@ def prepare_trace():
         vmr.trace = load()
     return deepcopy(vmr.trace)
 
+
 def prepare_vm_ctx():
     vmr = get_vmr()
     return deepcopy(vmr.vm_ctx)
 
+
 def prepare_vm_operands():
     vmr = get_vmr()
     return deepcopy(vmr.vm_operands)
+
 
 def load_dbg(choice):
     dbg_handl = get_dh(available_debuggers[choice])
@@ -73,14 +80,17 @@ def load_dbg(choice):
     else:
         raise Exception("[*] Could not load debugger! Please check if the selected debugger is available.")
 
+
 def load_trace():
     vmr = get_vmr()
     trace = load()
     vmr.trace = trace
 
+
 def save_trace():
     trace = prepare_trace()
     save(trace)
+
 
 def gen_instruction_trace(choice):
     """
@@ -95,8 +105,8 @@ def gen_instruction_trace(choice):
     else:
         raise Exception('[*] Trace seems to be None, so it was disregarded!')
 
+
 ### ANALYSIS FUNCTIONALITY###
-# TODO multithreading !!!
 class DynamicAnalyzer(Thread):
     def __init__(self, func, trace, **kwargs):
         super(DynamicAnalyzer, self).__init__()
@@ -131,8 +141,11 @@ def address_heuristic():
         print '[*] An exception occurred! Quitting! '
         w.close()
 
+
 # analysis functions supporting manual flag
 manual_func = [find_output, find_input, find_virtual_regs, follow_virt_reg]
+
+
 def manual_analysis(choice):
     """
     Allows the execution of analysis functions with the manual flag. Output will mainly be in the Output window and some instances require user interaction.
@@ -145,6 +158,7 @@ def manual_analysis(choice):
     w.pbar_update(10)
     func(deepcopy(trace), manual=True, update=w)
     w.close()
+
 
 def input_output_analysis(manual=False):
     """
@@ -181,9 +195,22 @@ def input_output_analysis(manual=False):
             w.pbar_update(20)
             vr = vr.get_result()
             # create the trace excerpt for every relevant reg
-            for key in vr.keys():
-                if get_reg_class(key) is not None:
-                    ctx[key] = follow_virt_reg(deepcopy(trace), virt_reg_addr=vr[key], real_reg_name=key)
+            pool = Pool(CORE_NUM)
+
+            packed = partial(input_output_analysis_helper, vr, trace)
+            key_followed_trace_mapping = pool.map(packed, vr.keys())
+            # clean the mapping from unused elements
+            key_followed_trace_mapping = [a for a in key_followed_trace_mapping if a is not (None, None)]
+
+            pool.terminate()
+            pool.join()
+
+            for elem in key_followed_trace_mapping:
+                ctx[elem[0]] = elem[1]
+            # old single threaded code
+            # for key in vr.keys():
+            #     if get_reg_class(key) is not None:
+            #         ctx[key] = follow_virt_reg(deepcopy(trace), virt_reg_addr=vr[key], real_reg_name=key)
             vmr.vm_stack_reg_mapping = ctx
             w.pbar_update(20)
             input.join()
@@ -196,6 +223,14 @@ def input_output_analysis(manual=False):
             v.Show()
     except:
         w.close()
+
+
+def input_output_analysis_helper(vr, trace, key):
+    if get_reg_class(key) is None:
+        return (None, None)
+    else:
+        return (key, follow_virt_reg(deepcopy(trace), virt_reg_addr=vr[key], real_reg_name=key))
+
 
 def clustering_analysis(visualization=0, grade=False, trace=None):
     """
@@ -250,6 +285,7 @@ def clustering_analysis(visualization=0, grade=False, trace=None):
     except:
         w.close()
 
+
 def optimization_analysis():
     """
     Opens the Optimization Viewer to let the user dynamically interact with the trace.
@@ -257,6 +293,7 @@ def optimization_analysis():
     trace = prepare_trace()
     v = OptimizationViewer(trace, save=save)
     v.Show()
+
 
 def dynamic_vmctx(manual=False):
     """
@@ -268,7 +305,9 @@ def dynamic_vmctx(manual=False):
     vmr = get_vmr()
     vmr.vm_ctx = vm_ctx
     if manual:
-        print 'Code Start: %x; Code End: %x; Base Addr: %x; VM Addr: %x' % (vm_ctx.code_start, vm_ctx.code_end, vm_ctx.base_addr, vm_ctx.vm_addr)
+        print 'Code Start: %x; Code End: %x; Base Addr: %x; VM Addr: %x' % (
+        vm_ctx.code_start, vm_ctx.code_end, vm_ctx.base_addr, vm_ctx.vm_addr)
+
 
 def init_grading(trace):
     """
@@ -309,7 +348,7 @@ def grading_automaton(visualization=0):
     try:
         ### INIT THE TRACE GRADES ###
         trace = init_grading(deepcopy(trace))
-        w.pbar_update(10) # 10%
+        w.pbar_update(10)  # 10%
 
         ### REGISTER USAGE BASED: this must be done before optimization
         reg_dict = defaultdict(lambda: 0)
@@ -322,9 +361,10 @@ def grading_automaton(visualization=0):
                     reg_dict[get_reg_class(line.disasm[2])] += 1
 
             # get the sorted list of regs highest occurence first
-            sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
+            sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1),
+                                 reverse=True)  # sorted_list = list of (reg_name, frequency)
             length = len(sorted_keys)
-            w.pbar_update(10) # 20%
+            w.pbar_update(10)  # 20%
             # classify the important and less important registers
             if length % 2 == 0:
                 important_regs = set(reg[0] for reg in sorted_keys[:(length / 2)])
@@ -336,14 +376,13 @@ def grading_automaton(visualization=0):
         except:
             pass
 
-
         ### OPTIMIZE TRACE ###
         try:
             if not trace.constant_propagation:
                 trace = optimization_const_propagation(trace)
         except:
             pass
-        w.pbar_update(10) #30%
+        w.pbar_update(10)  # 30%
         try:
             if not trace.stack_addr_propagation:
                 trace = optimization_stack_addr_propagation(trace)
@@ -359,7 +398,7 @@ def grading_automaton(visualization=0):
                     if val in line.to_str_line():
                         line.raise_grade(vmr.in_out)
 
-            w.pbar_update(10) #40%
+            w.pbar_update(10)  # 40%
 
             # backtrace regs and raise grade
             virt_regs = find_virtual_regs(deepcopy(trace))
@@ -382,37 +421,39 @@ def grading_automaton(visualization=0):
                             print 'The line %s was not found in the trace, hence the grade could not be lowered properly!' % line.to_str_line()
         except:
             pass
-        w.pbar_update(5) #45%
+        w.pbar_update(5)  # 45%
 
         ### REGISTER USAGE FREQUENCY BASED ###
         try:
             # lower the grades for the most commonly used registers
             for line in trace:
                 assert isinstance(line, Traceline)
-                if line.is_op1_reg and get_reg_class(line.disasm[1]) is not None:  # get reg class will only return != None for the 8-16 standard cpu regs
+                if line.is_op1_reg and get_reg_class(line.disasm[
+                                                         1]) is not None:  # get reg class will only return != None for the 8-16 standard cpu regs
                     reg_dict[get_reg_class(line.disasm[1])] += 1
 
             # get the sorted list of regs highest occurrence first
-            sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1), reverse=True)  # sorted_list = list of (reg_name, frequency)
+            sorted_keys = sorted(reg_dict.items(), key=operator.itemgetter(1),
+                                 reverse=True)  # sorted_list = list of (reg_name, frequency)
             length = len(sorted_keys)
-            w.pbar_update(5) #50%
+            w.pbar_update(5)  # 50%
             # classify the less important registers
             if length % 2 == 0:
                 disregard_regs = set(reg[0] for reg in sorted_keys[:(length / 2)])
             else:
                 disregard_regs = set(reg[0] for reg in sorted_keys[:(length - 1) / 2])
 
-
             for line in trace:
                 assert isinstance(line, Traceline)
-                if line.is_jmp or line.is_mov or line.is_pop or line.is_push or line.disasm[0].startswith('ret') or line.disasm[
-                    0].startswith('inc') or line.disasm[0].startswith('lea'):
+                if line.is_jmp or line.is_mov or line.is_pop or line.is_push or line.disasm[0].startswith('ret') or \
+                        line.disasm[
+                            0].startswith('inc') or line.disasm[0].startswith('lea'):
                     line.lower_grade(vmr.pa_ma)
                 elif len(line.disasm) > 1 and get_reg_class(line.disasm[1]) in disregard_regs:
                     line.lower_grade(vmr.pa_ma)
         except:
             pass
-        w.pbar_update(10) #60%
+        w.pbar_update(10)  # 60%
 
         ### CLUSTERING BASED ###
         try:
@@ -423,14 +464,15 @@ def grading_automaton(visualization=0):
                     trace[trace.index(line)].raise_grade(vmr.clu)
         except:
             pass
-        w.pbar_update(10) #70%
+        w.pbar_update(10)  # 70%
 
         ### PEEPHOLE GRADING ###
         try:
             # peephole grading
             for line in trace:
                 assert isinstance(line, Traceline)
-                if line.disasm[0] in ['pop', 'push', 'inc', 'dec', 'lea', 'test'] or line.disasm[0].startswith('c') or line.is_jmp or line.is_mov or line.disasm[0].startswith('r'):
+                if line.disasm[0] in ['pop', 'push', 'inc', 'dec', 'lea', 'test'] or line.disasm[0].startswith(
+                        'c') or line.is_jmp or line.is_mov or line.disasm[0].startswith('r'):
                     line.lower_grade(vmr.pa_ma)
                 elif len(line.disasm) > 1 and get_reg_class(line.disasm[1]) > 4:
                     continue
@@ -438,12 +480,12 @@ def grading_automaton(visualization=0):
                     line.raise_grade(vmr.pa_ma)
         except:
             pass
-        w.pbar_update(10) #80%
+        w.pbar_update(10)  # 80%
 
         ### OPTIMIZATION BASED ###
         try:
             opti_trace = optimize(deepcopy(trace))
-            w.pbar_update(10) #90%
+            w.pbar_update(10)  # 90%
             for line in opti_trace:
                 assert isinstance(line, Traceline)
                 try:  # trace is heavily changed after optimization, might not find the trace line in the pre_op_trace
@@ -465,7 +507,9 @@ def grading_automaton(visualization=0):
         ### STATIC OPTIMIZATION BASED ###
         # TODO atm this is a little workaround to include the static analysis results
         try:
-            comments = set(v_inst.split(' ')[0] for v_inst in [Comment(ea) for ea in range(vmr.code_start, vmr.code_end)] if v_inst is not None)
+            comments = set(
+                v_inst.split(' ')[0] for v_inst in [Comment(ea) for ea in range(vmr.code_start, vmr.code_end)] if
+                v_inst is not None)
             print comments
             ins = [c.lstrip('v').split('_')[0] for c in comments]
             for line in trace:
@@ -500,12 +544,12 @@ def grading_automaton(visualization=0):
         except:
             pass
 
-
         if visualization == 0:
             v = GradingViewer(trace, save=save)
             v.Show()
         else:
-            threshold = AskLong(1, 'There are a total of %s grades: %s. Specify a threshold which lines to display:' % (len(grades), ''.join('%s ' % c for c in grades)))
+            threshold = AskLong(1, 'There are a total of %s grades: %s. Specify a threshold which lines to display:' % (
+            len(grades), ''.join('%s ' % c for c in grades)))
             if threshold > -1:
                 for line in trace:
                     if line.grade >= threshold:
