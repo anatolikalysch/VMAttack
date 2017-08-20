@@ -1,4 +1,4 @@
-#VMAttack **IDA** PRO Plugin
+# VMAttack **IDA** PRO Plugin
 **IDA Pro Plugin for static and dynamic virtualization-based packed analysis and deobfuscation.**
 
 **VMAttack was awarded the _second place_ at the annual [IDA Pro Plug-in Contest in 2016](https://www.hex-rays.com/contests/2016/index.shtml)!**
