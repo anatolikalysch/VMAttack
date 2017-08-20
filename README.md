@@ -3,13 +3,13 @@
 
 **VMAttack was awarded the _second place_ at the annual [IDA Pro Plug-in Contest in 2016](https://www.hex-rays.com/contests/2016/index.shtml)!**
 
-##Introduction
+## Introduction
 
 VMAttack is an **IDA PRO** Plug-in which enables the reverse engineer to use additional analysis features designed to counter _virtualization-based obfuscation_. For now the focus is on **stack based virtual machines**, but will be broadened to support more architectures in the future. The plugin supports static and dynamic analysis capabilities which use **IDA API** features in conjunction with the plugins own analysis capabilities to provide automatic, semi-automatic and manual analysis functionality. 
 The main goal of this plugin is to assist the reverse engineer in undoing the _virtualization-based obfuscation_ and to automate the reversing process where possible.
 
-##Installation
-###Prerequisites
+## Installation
+### Prerequisites
 
 - IDA Pro >= 6.6
 
@@ -17,7 +17,7 @@ The main goal of this plugin is to assist the reverse engineer in undoing the _v
 
 - Tested with Windows 7 and Windows 10.
 
-###Guided Install
+### Guided Install
 
 To install the plugin simply run the setup.py:
 
@@ -27,7 +27,7 @@ python setup.py install
 
 You will be prompted for the full path to your **IDA PRO** installation, aside from that no user interaction should be required.
 
-###Alternative manual Install:
+### Alternative manual Install:
 Should the guided install fail for any reason a manual installation is also possible.
 
 The only required python dependencies are `distorm3` and `idacute` which can be installed via pip:
@@ -44,11 +44,11 @@ setx VMAttack X:full\path\to\plugin
 
 Last you should copy the `VMAttack_plugin_stub.py` into your **IDA PRO** Plugins directory. That's it, now you're good to go!
 
-###Possible Issues
+### Possible Issues
 
  - Unable to find vcvarsall.bat => you need to install 'Microsoft Visual C++ Compiler for Python 2.7'
 
-##Quick start guide
+## Quick start guide
 
 The Example folder contains the obfuscated binary and source binary of an add function. The obfuscated **addvmp** contains the VM function which we will analyze now.
 
@@ -98,13 +98,13 @@ The abstract VM graph in turn will produce a control flow graph (in the case of 
 
 ![alt text](screenshots/ab_vm_graph.png "Abstract VM Graph")
 
-##Analysis Capabilities
+## Analysis Capabilities
 
 The following subsection describes the analysis functions and offers additional information about the plugins inner workings. A quick start guide can be found in the next subsection.
 
 The analysis features are subdivided into automatic, semi-automatic and manual, depending on user interaction necessary for the completion of the analysis. While the automatic analysis requires nearly none, manual analysis capabilities require interaction and will query the user if needed.
 
-###Instruction Trace
+### Instruction Trace
 
 ![alt text](screenshots/generate_trace.png "Instruction trace overview")
 
@@ -119,7 +119,7 @@ But how can you actually get one? The two currently supported possibilities are 
 
 A reverse engineer can decide to save an analyzed trace as a .json file which can be loaded later on to continue analysis. This provides a convenient way to experiment on traces and combine different analysis together for improved results.
 
-###What is a trace?
+### What is a trace?
 
 In the plugin context a trace is a list object consisting of trace lines. Each trace line consists of four basic values:
 
@@ -137,7 +137,7 @@ These are explained later in their respective analysis sections. Each time a tra
 
 For more information see `dynamic/TraceRepresentation.py`
 
-###Automated Analysis
+### Automated Analysis
 
 ![alt text](screenshots/grading.png "Grading System Overview")
 
@@ -161,8 +161,8 @@ The grading analysis viewer provides additional interaction interfaces to the us
 
 ![alt text](screenshots/grading3.png "Grading System")
 
-###Semi-Automatic Analysis
-####Static Analysis
+### Semi-Automatic Analysis
+#### Static Analysis
 
 ![alt text](screenshots/static.png "Static Analysis Overview")
 
@@ -183,7 +183,7 @@ The static deobfuscate function tries to statically determine the instructions t
 
 Another possibility where user interaction might become necessary, is when byte code is separated by useful executable instructions. In this example one could stop the deobfuscation at `0x4048f7` by choosing 'No' and input in the next prompt `Where should deobfuscation continue?` the address right after the instructions `0x404901`, as it is safe.
 
-####Dynamic Analysis
+#### Dynamic Analysis
 
 ![alt text](screenshots/dynamic.png "Dynamic Analysis Overview")
 
@@ -260,8 +260,8 @@ The stack changes viewer presents the stack and shows the changes which took pla
 
 ![alt text](screenshots/StackChanges.png "Stack Changes Viewer")
 
-###Manual Analysis
-####VM Context
+### Manual Analysis
+#### VM Context
 
 ![alt text](screenshots/manual_vm_context.png "Manual VMContext Overview")
 
@@ -274,7 +274,7 @@ The VM Context consists of four values:
 
 The user has the choice whether he wants to determine it statically or dynamically. An alternative to this is to manually input the values during static analysis or in the **settings** menu.
 
-####Static Analysis
+#### Static Analysis
 
 ![alt text](screenshots/manual_static.png "Manual Static Overview")
 
@@ -288,7 +288,7 @@ Upon selection the user will be prompted for all the values:
 - Code End - the byte code end
 - VM Addr - the start address of the virtual machine function
 
-####Dynamic Analysis
+#### Dynamic Analysis
 
 ![alt text](screenshots/manual_dynamic.png "Manual Dynamic Overview")
 
@@ -302,7 +302,7 @@ Upon selection the user will be prompted for all the values:
 
 **Address Count:** The address count reads in a trace and returns in **IDA**s output window the ratio: (Address (disasm): frequency of occurrence).
 
-###Settings
+### Settings
 
 ![alt text](screenshots/settings.png "Settings")
 
@@ -334,7 +334,7 @@ The Settings provide the necessary interface to enable the user to change values
 
 **Extract function parameters**: Should function parameters be extracted during trace generation
 
-##Current Progress
+## Current Progress
 
 Current Version: 0.2
 
